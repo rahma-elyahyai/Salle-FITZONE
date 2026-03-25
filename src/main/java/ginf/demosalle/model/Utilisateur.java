@@ -28,7 +28,7 @@ public class Utilisateur implements Serializable {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, columnDefinition = "ENUM('MEMBRE','COACH')")
+    @Column(name = "role", nullable = false, length = 20)
     private Role role;
 
     @Column(name = "mdp", nullable = false, length = 255)

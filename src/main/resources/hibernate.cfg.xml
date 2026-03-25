@@ -6,14 +6,16 @@
 <hibernate-configuration>
     <session-factory>
 
-        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">
-            jdbc:mysql://localhost:3307/gestion_salle_sport?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true&amp;characterEncoding=UTF-8&amp;useUnicode=true
-        </property>
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">Root1234!</property>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
 
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.connection.url">
+            jdbc:postgresql://ep-summer-silence-amt5cfva-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require
+        </property>
+
+        <property name="hibernate.connection.username">neondb_owner</property>
+        <property name="hibernate.connection.password">npg_Nk8X4jruydDK</property>
+
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
