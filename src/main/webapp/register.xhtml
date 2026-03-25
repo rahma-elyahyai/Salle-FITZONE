@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FITZONE — Inscription</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&amp;family=Barlow:wght@400;500;600&amp;display=swap"
+          rel="stylesheet"/>
+    <h:outputStylesheet name="css/login.css"/>
+</h:head>
+
+<h:body>
+<div class="fz-root">
+
+    <!-- Panneau gauche (même que login) -->
+    <div class="fz-left-panel">
+        <div class="fz-grid"></div>
+        <div class="fz-glow"></div>
+        <div class="fz-left-content">
+            <div class="fz-logo-wrap">
+                <h:graphicImage library="images" name="logo2.png"
+                                styleClass="fz-logo-img"
+                                alt="FITZONE"/>
+            </div>
+            <div class="fz-brand-name">FITZONE</div>
+            <div class="fz-brand-sub">Club Management</div>
+            <p class="fz-tagline">
+                Créez votre compte et rejoignez la <strong>communauté FITZONE</strong>.
+                Réservez vos séances, suivez vos abonnements.
+            </p>
+        </div>
+    </div>
+
+    <!-- Formulaire inscription -->
+    <div class="fz-right-panel">
+        <div class="fz-form-box" style="max-width:440px;">
+
+            <div class="fz-eyebrow">
+                <div class="fz-eyebrow-line"></div>
+                <div class="fz-eyebrow-text">Nouveau compte</div>
+            </div>
+            <div class="fz-title">CRÉER<br/><span>UN COMPTE</span></div>
+            <div class="fz-subtitle" style="margin-bottom:24px;">
+                Remplissez le formulaire pour rejoindre FITZONE.
+            </div>
+
+            <h:messages globalOnly="true" styleClass="fz-messages"
+                        errorClass="fz-msg-error" infoClass="fz-msg-info"/>
+
+            <h:form id="regForm" styleClass="fz-form">
+
+                <!-- Nom + Prénom -->
+                <div style="display:flex; gap:12px;">
+                    <div class="fz-field" style="flex:1;">
+                        <label class="fz-label">Nom</label>
+                        <div class="fz-input-wrap">
+                            <span class="fz-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="8" r="4"/>
+                                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                                </svg>
+                            </span>
+                            <h:inputText id="nom" value="#{registerBean.nom}"
+                                         styleClass="fz-input" placeholder="Nom"
+                                         required="true" requiredMessage="Obligatoire"/>
+                        </div>
+                        <h:message for="nom" styleClass="fz-field-err"/>
+                    </div>
+                    <div class="fz-field" style="flex:1;">
+                        <label class="fz-label">Prénom</label>
+                        <div class="fz-input-wrap">
+                            <span class="fz-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="8" r="4"/>
+                                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                                </svg>
+                            </span>
+                            <h:inputText id="prenom" value="#{registerBean.prenom}"
+                                         styleClass="fz-input" placeholder="Prénom"
+                                         required="true" requiredMessage="Obligatoire"/>
+                        </div>
+                        <h:message for="prenom" styleClass="fz-field-err"/>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="fz-field">
+                    <label class="fz-label">Email</label>
+                    <div class="fz-input-wrap">
+                        <span class="fz-icon">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                <polyline points="2,4 12,13 22,4"/>
+                            </svg>
+                        </span>
+                        <h:inputText id="email" value="#{registerBean.email}"
+                                     styleClass="fz-input" placeholder="votre@email.ma"
+                                     required="true" requiredMessage="Email obligatoire">
+                            <f:validateRegex
+                                pattern="^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"/>
+                        </h:inputText>
+                    </div>
+                    <h:message for="email" styleClass="fz-field-err"/>
+                </div>
+
+                <!-- Téléphone -->
+                <div class="fz-field">
+                    <label class="fz-label">Téléphone</label>
+                    <div class="fz-input-wrap">
+                        <span class="fz-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.63 18.9 19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 5.54 5.54l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                        </span>
+                        <h:inputText id="telephone" value="#{registerBean.telephone}"
+                                     styleClass="fz-input" placeholder="+212 6XX-XXXXXX"/>
+                    </div>
+                </div>
+
+                <!-- Rôle -->
+                <div class="fz-field">
+                    <label class="fz-label">Je suis</label>
+                    <div class="fz-role-group">
+                        <h:selectOneRadio id="role" value="#{registerBean.roleChoisi}"
+                                          styleClass="fz-role-radio" layout="pageDirection"
+                                          style="display:none;">
+                            <f:selectItem itemValue="MEMBRE" itemLabel="Membre"/>
+                            <f:selectItem itemValue="COACH"  itemLabel="Coach"/>
+                        </h:selectOneRadio>
+                        <!-- Boutons visuels JS-only pour l'UX -->
+                        <button type="button" class="fz-role-btn active"
+                                onclick="setRole('MEMBRE',this)"> Membre</button>
+                        <button type="button" class="fz-role-btn"
+                                onclick="setRole('COACH',this)"> Coach</button>
+                    </div>
+                </div>
+
+                <!-- Mot de passe -->
+                <div class="fz-field">
+                    <label class="fz-label">Mot de passe</label>
+                    <div class="fz-input-wrap">
+                        <span class="fz-icon">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                        </span>
+                        <h:inputSecret id="mdp" value="#{registerBean.mdp}"
+                                       styleClass="fz-input" placeholder="Min. 8 caractères"
+                                       required="true" requiredMessage="Mot de passe obligatoire"
+                                       redisplay="false">
+                            <f:validateLength minimum="8"/>
+                        </h:inputSecret>
+                    </div>
+                    <h:message for="mdp" styleClass="fz-field-err"/>
+                </div>
+
+                <!-- Confirmer mdp -->
+                <div class="fz-field">
+                    <label class="fz-label">Confirmer le mot de passe</label>
+                    <div class="fz-input-wrap">
+                        <span class="fz-icon">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                        </span>
+                        <h:inputSecret id="confirmMdp" value="#{registerBean.confirmMdp}"
+                                       styleClass="fz-input" placeholder="Répétez votre mot de passe"
+                                       required="true" requiredMessage="Confirmation obligatoire"
+                                       redisplay="false"/>
+                    </div>
+                    <h:message for="confirmMdp" styleClass="fz-field-err"/>
+                </div>
+
+                <h:commandButton value="CRÉER MON COMPTE →"
+                                 action="#{registerBean.register}"
+                                 styleClass="fz-btn"/>
+
+                <div class="fz-switch">
+                    Déjà inscrit ?
+                    <h:link value="Se connecter" outcome="/login"/>
+                </div>
+
+            </h:form>
+        </div>
+    </div>
+</div>
+
+<script>
+function setRole(val, btn) {
+    // Mettre à jour les boutons visuels
+    document.querySelectorAll('.fz-role-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // Synchroniser le composant JSF caché
+    var radios = document.querySelectorAll('input[type="radio"]');
+    radios.forEach(r => { if (r.value === val) r.checked = true; });
+}
+</script>
+</h:body>
+</html>

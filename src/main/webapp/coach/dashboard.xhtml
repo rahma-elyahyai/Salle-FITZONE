@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FITZONE — Espace Coach</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Inter:wght@400;500;600&amp;display=swap"
+          rel="stylesheet"/>
+    <h:outputStylesheet name="css/dashboard-coach.css"/>
+</h:head>
+
+<h:body>
+<div class="fz-shell">
+
+    <!-- ══════════════════════════════════
+         SIDEBAR
+    ══════════════════════════════════ -->
+    <aside class="fz-sidebar">
+
+        <div class="fz-sidebar-logo">
+            <h:graphicImage library="images" name="logo.png"
+                            alt="FITZONE"
+                            style="width:36px;height:36px;object-fit:contain;mix-blend-mode:lighten;"/>
+            <div>
+                <div class="fz-sidebar-logo-text">FITZONE</div>
+                <div class="fz-sidebar-logo-sub">Coach Portal</div>
+            </div>
+        </div>
+
+        <!-- User card dans sidebar pour coach -->
+        <div class="fz-user-card">
+            <div class="fz-avatar fz-avatar-coach">
+                <h:outputText value="#{authBean.initiales}"/>
+            </div>
+            <div>
+                <div class="fz-user-name">
+                    <h:outputText value="#{authBean.utilisateurConnecte.prenom} #{authBean.utilisateurConnecte.nom}"/>
+                </div>
+                <div class="fz-user-role fz-role-coach">Coach</div>
+            </div>
+        </div>
+
+        <nav class="fz-nav">
+            <div class="fz-nav-section">Navigation</div>
+
+            <div class="fz-nav-item active" onclick="showSection('accueil',this)">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+                Tableau de bord
+            </div>
+            <div class="fz-nav-item" onclick="showSection('seances',this)">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Mes Séances
+            </div>
+            <div class="fz-nav-item" onclick="showSection('membres',this)">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Mes Membres
+            </div>
+            <div class="fz-nav-item" onclick="showSection('profil',this)">
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Mon Profil
+            </div>
+        </nav>
+
+        <div class="fz-sidebar-footer">
+            <h:form id="logoutForm">
+                <button type="button" class="fz-logout-btn"
+                        onclick="document.getElementById('logoutForm:logoutBtn').click()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Déconnexion
+                </button>
+                <h:commandButton id="logoutBtn" action="#{authBean.logout}" style="display:none"/>
+            </h:form>
+        </div>
+    </aside>
+
+    <!-- ══════════════════════════════════
+         MAIN
+    ══════════════════════════════════ -->
+    <main class="fz-main">
+
+        <div class="fz-topbar">
+            <div class="fz-topbar-title" id="topbarTitle">Espace <span>Coach</span></div>
+            <div class="fz-topbar-right">
+                <div class="fz-topbar-date" id="topbarDate"></div>
+                <div class="fz-topbar-dot"></div>
+                <div class="fz-user-card-top">
+                    <div class="fz-avatar fz-avatar-coach" style="width:32px;height:32px;font-size:13px">
+                        <h:outputText value="#{authBean.initiales}"/>
+                    </div>
+                    <div>
+                        <div class="fz-user-name" style="font-size:12px">
+                            <h:outputText value="#{authBean.utilisateurConnecte.prenom} #{authBean.utilisateurConnecte.nom}"/>
+                        </div>
+                        <div class="fz-user-role fz-role-coach" style="font-size:9px">Coach</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fz-content">
+
+            <!-- ══════════════════════════
+                 ACCUEIL
+            ══════════════════════════ -->
+            <div class="fz-section active" id="section-accueil">
+
+                <!-- Message motivation coach -->
+                <div class="fz-motivation fz-motivation-coach" id="fz-motivation"></div>
+
+                <!-- Welcome banner -->
+                <div class="fz-welcome-banner fz-welcome-coach">
+                    <div>
+                        <div class="fz-welcome-greeting">Bonjour,</div>
+                        <div class="fz-welcome-name">
+                            <span><h:outputText value="#{authBean.utilisateurConnecte.prenom}"/></span>
+                            <h:outputText value=" #{authBean.utilisateurConnecte.nom}"/>
+                        </div>
+                        <div class="fz-welcome-sub">
+                            Spécialité :&#160;
+                            <strong style="color:var(--blue-lt)">
+                                <h:outputText value="#{coachBean.coach.specialite}"/>
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="fz-welcome-badge-coach">COACH</div>
+                </div>
+
+                <!-- Stat cards -->
+                <div class="fz-cards-grid">
+                    <div class="fz-card fz-card-coach">
+                        <div class="fz-card-icon fz-icon-blue">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div class="fz-card-label">Séances ce mois</div>
+                        <div class="fz-card-value blue">
+                            <h:outputText value="#{coachBean.seancesCeMois}"/>
+                        </div>
+                        <div class="fz-card-sub">
+                            <h:outputText value="#{coachBean.seancesAVenir.size()}"/> à venir
+                        </div>
+                    </div>
+
+                    <div class="fz-card fz-card-coach">
+                        <div class="fz-card-icon fz-icon-blue">
+                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <div class="fz-card-label">Membres inscrits</div>
+                        <div class="fz-card-value blue">
+                            <h:outputText value="#{coachBean.totalMembres}"/>
+                        </div>
+                        <div class="fz-card-sub">Sur toutes séances</div>
+                    </div>
+
+                    <div class="fz-card fz-card-coach">
+                        <div class="fz-card-icon fz-icon-blue">
+                            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        </div>
+                        <div class="fz-card-label">Taux de présence</div>
+                        <div class="fz-card-value blue">
+                            <h:outputText value="#{coachBean.tauxPresence}"/>%
+                        </div>
+                        <div class="fz-card-sub">Confirmées / Total</div>
+                    </div>
+
+                    <div class="fz-card fz-card-coach">
+                        <div class="fz-card-icon fz-icon-blue">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+                        </div>
+                        <div class="fz-card-label">Heures encadrées</div>
+                        <div class="fz-card-value blue">
+                            <h:outputText value="#{coachBean.totalHeures}"/>h
+                        </div>
+                        <div class="fz-card-sub">Depuis le début</div>
+                    </div>
+                </div>
+
+                <!-- Ligne : prochaine séance + membres aujourd'hui -->
+                <div class="fz-home-row">
+
+                    <!-- Prochaine séance du coach -->
+                    <div class="fz-next-seance-wrap">
+                        <div class="fz-block-label">Prochaine séance</div>
+                        <h:panelGroup rendered="#{not empty coachBean.seancesAVenir}" layout="block">
+                            <div class="fz-next-seance fz-next-seance-coach">
+                                <div class="fz-next-seance-left">
+                                    <div class="fz-next-seance-badge fz-badge-blue-pill">Planifiée</div>
+                                    <div class="fz-next-seance-title">
+                                        <h:outputText value="#{coachBean.seancesAVenir[0].titre}"/>
+                                    </div>
+                                    <div class="fz-next-seance-meta">
+                                        <span>
+                                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+                                            <h:outputText value="#{coachBean.seancesAVenir[0].dateHeure}">
+                                                <f:convertDateTime pattern="EEE dd MMM — HH:mm" type="localDateTime" locale="fr"/>
+                                            </h:outputText>
+                                        </span>
+                                        <span>
+                                            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                            <h:outputText value="#{coachBean.seancesAVenir[0].salle.nomSalle}"/>
+                                        </span>
+                                        <span>
+                                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                                            <h:outputText value="#{coachBean.seancesAVenir[0].categorie}"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="fz-next-seance-right">
+                                    <div class="fz-next-seance-duration fz-duration-blue">
+                                        <h:outputText value="#{coachBean.seancesAVenir[0].duree}"/>
+                                        <span>min</span>
+                                    </div>
+                                    <div class="fz-seance-places">
+                                        <h:outputText value="#{coachBean.seancesAVenir[0].capaciteMaximale}"/>
+                                        <span>places</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{empty coachBean.seancesAVenir}" layout="block">
+                            <div class="fz-next-seance fz-next-seance-empty">
+                                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                <div>Aucune séance planifiée</div>
+                            </div>
+                        </h:panelGroup>
+                    </div>
+
+                    <!-- Membres inscrits à la prochaine séance -->
+                    <div class="fz-recent-card">
+                        <div class="fz-block-label" style="padding:16px 20px 0">
+                            Inscrits — prochaine séance
+                        </div>
+                        <h:panelGroup rendered="#{not empty coachBean.membresProchainSeance}" layout="block">
+                            <div class="fz-recent-list">
+                                <ui:repeat value="#{coachBean.membresProchainSeance}" var="res">
+                                    <div class="fz-recent-item">
+                                        <div class="fz-mini-avatar fz-mini-avatar-blue">
+                                            <h:outputText value="#{res.membre.utilisateur.initiales}"/>
+                                        </div>
+                                        <div class="fz-recent-info">
+                                            <div class="fz-recent-name">
+                                                <h:outputText value="#{res.membre.utilisateur.prenom} #{res.membre.utilisateur.nom}"/>
+                                            </div>
+                                            <div class="fz-recent-date">
+                                                Réservé le&#160;<h:outputText value="#{res.dateReservation}">
+                                                    <f:convertDateTime pattern="dd/MM HH:mm" type="localDateTime"/>
+                                                </h:outputText>
+                                            </div>
+                                        </div>
+                                        <span class="fz-badge
+                                            #{res.statutReservation.name() == 'confirmee' ? 'fz-badge-green' :
+                                              res.statutReservation.name() == 'annulee'   ? 'fz-badge-gray'  : 'fz-badge-orange'}">
+                                            <h:outputText value="#{res.statutReservation.name() == 'confirmee' ? 'Confirmé' :
+                                                res.statutReservation.name() == 'annulee' ? 'Annulé' : 'En attente'}"/>
+                                        </span>
+                                    </div>
+                                </ui:repeat>
+                            </div>
+                            <div class="fz-recent-footer"
+                                 onclick="showSection('membres', document.querySelectorAll('.fz-nav-item')[2])">
+                                Voir tous les membres →
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{empty coachBean.membresProchainSeance}" layout="block">
+                            <div class="fz-next-seance-empty" style="padding:28px;text-align:center;color:var(--muted2)">
+                                Aucune inscription pour l'instant
+                            </div>
+                        </h:panelGroup>
+                    </div>
+                </div>
+
+                <!-- Ligne 2 : bar chart + séances récentes -->
+                <div class="fz-home-row">
+
+                    <!-- Bar chart séances par semaine -->
+                    <div class="fz-chart-card">
+                        <div class="fz-block-label">Séances animées ce mois</div>
+                        <div class="fz-chart-wrap">
+                            <div class="fz-bars fz-bars-coach" id="fz-bars"></div>
+                            <div class="fz-bars-legend">
+                                <span>S1</span><span>S2</span><span>S3</span><span>S4</span>
+                            </div>
+                        </div>
+                        <div class="fz-chart-footer">
+                            <span id="fz-chart-total"></span> séances animées ce mois
+                        </div>
+                    </div>
+
+                    <!-- Séances récentes -->
+                    <div class="fz-recent-card">
+                        <div class="fz-block-label" style="padding:16px 20px 0">
+                            Séances récentes
+                        </div>
+                        <h:panelGroup rendered="#{not empty coachBean.seancesPassees}" layout="block">
+                            <div class="fz-recent-list">
+                                <ui:repeat value="#{coachBean.seancesPassees}" var="s" begin="0" end="3">
+                                    <div class="fz-recent-item">
+                                        <div class="fz-recent-dot
+                                            #{s.statut.name() == 'terminee' ? 'dot-blue' :
+                                              s.statut.name() == 'annulee'  ? 'dot-gray'  : 'dot-orange'}">
+                                        </div>
+                                        <div class="fz-recent-info">
+                                            <div class="fz-recent-name">
+                                                <h:outputText value="#{s.titre}"/>
+                                            </div>
+                                            <div class="fz-recent-date">
+                                                <h:outputText value="#{s.dateHeure}">
+                                                    <f:convertDateTime pattern="dd MMM — HH:mm" type="localDateTime" locale="fr"/>
+                                                </h:outputText>
+                                                &#160;·&#160;<h:outputText value="#{s.salle.nomSalle}"/>
+                                            </div>
+                                        </div>
+                                        <span class="fz-badge
+                                            #{s.statut.name() == 'terminee' ? 'fz-badge-blue' :
+                                              s.statut.name() == 'annulee'  ? 'fz-badge-gray' : 'fz-badge-orange'}">
+                                            <h:outputText value="#{s.statut.name() == 'terminee' ? 'Terminée' :
+                                                s.statut.name() == 'annulee' ? 'Annulée' : 'Planifiée'}"/>
+                                        </span>
+                                    </div>
+                                </ui:repeat>
+                            </div>
+                            <div class="fz-recent-footer"
+                                 onclick="showSection('seances', document.querySelectorAll('.fz-nav-item')[1])">
+                                Voir toutes les séances →
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{empty coachBean.seancesPassees}" layout="block">
+                            <div class="fz-next-seance-empty" style="padding:24px;text-align:center">
+                                Aucune séance passée
+                            </div>
+                        </h:panelGroup>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════
+                 MES SÉANCES
+            ══════════════════════════ -->
+            <div class="fz-section" id="section-seances">
+                <div class="fz-section-header">
+                    <div class="fz-section-eyebrow fz-eyebrow-blue"><span>Planning</span></div>
+                    <div class="fz-section-title">MES <span class="blue">SÉANCES</span></div>
+                </div>
+
+                <!-- Séances à venir -->
+                <div class="fz-block-label">Séances à venir</div>
+                <h:panelGroup rendered="#{not empty coachBean.seancesAVenir}" layout="block">
+                    <div class="fz-seances-grid" style="margin-bottom:28px">
+                        <ui:repeat value="#{coachBean.seancesAVenir}" var="s">
+                            <div class="fz-seance-card fz-seance-card-coach">
+                                <div class="fz-seance-header">
+                                    <div class="fz-seance-date">
+                                        <h:outputText value="#{s.dateHeure}">
+                                            <f:convertDateTime pattern="EEE dd MMM yyyy" type="localDateTime" locale="fr"/>
+                                        </h:outputText>
+                                    </div>
+                                    <span class="fz-badge fz-badge-blue">Planifiée</span>
+                                </div>
+                                <div class="fz-seance-body">
+                                    <div class="fz-seance-name"><h:outputText value="#{s.titre}"/></div>
+                                    <div class="fz-seance-meta">
+                                        <div class="fz-seance-meta-item">
+                                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+                                            <h:outputText value="#{s.dateHeure}">
+                                                <f:convertDateTime pattern="HH:mm" type="localDateTime"/>
+                                            </h:outputText>
+                                            &#160;— <h:outputText value="#{s.duree}"/> min
+                                        </div>
+                                        <div class="fz-seance-meta-item">
+                                            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                            <h:outputText value="#{s.salle.nomSalle}"/>
+                                        </div>
+                                        <div class="fz-seance-meta-item">
+                                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                                            Capacité : <h:outputText value="#{s.capaciteMaximale}"/> pers.
+                                        </div>
+                                        <div class="fz-seance-meta-item">
+                                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+                                            <h:outputText value="#{s.categorie}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="fz-seance-footer">
+                                    <div class="fz-seance-inscrits">
+                                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                                        <h:outputText value="#{coachBean.getNbInscrits(s.id)}"/> inscrits
+                                    </div>
+                                    <span class="fz-seance-cat-badge">
+                                        <h:outputText value="#{s.categorie}"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{empty coachBean.seancesAVenir}" layout="block">
+                    <div class="fz-empty" style="margin-bottom:28px">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        <div class="fz-empty-title">Aucune séance à venir</div>
+                        <div class="fz-empty-sub">Vos prochaines séances apparaîtront ici.</div>
+                    </div>
+                </h:panelGroup>
+
+                <!-- Historique des séances -->
+                <div class="fz-table-wrap">
+                    <div class="fz-table-header">Historique des séances</div>
+                    <h:panelGroup rendered="#{not empty coachBean.seancesPassees}" layout="block">
+                        <table class="fz-table">
+                            <thead>
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Date</th>
+                                    <th>Horaire</th>
+                                    <th>Salle</th>
+                                    <th>Inscrits</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{coachBean.seancesPassees}" var="s">
+                                    <tr>
+                                        <td><h:outputText value="#{s.titre}"/></td>
+                                        <td>
+                                            <h:outputText value="#{s.dateHeure}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" type="localDateTime"/>
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{s.dateHeure}">
+                                                <f:convertDateTime pattern="HH:mm" type="localDateTime"/>
+                                            </h:outputText>
+                                        </td>
+                                        <td><h:outputText value="#{s.salle.nomSalle}"/></td>
+                                        <td>
+                                            <h:outputText value="#{coachBean.getNbInscrits(s.id)}"/>
+                                            <span style="color:var(--muted)">/ <h:outputText value="#{s.capaciteMaximale}"/></span>
+                                        </td>
+                                        <td>
+                                            <span class="fz-badge
+                                                #{s.statut.name() == 'terminee' ? 'fz-badge-blue' :
+                                                  s.statut.name() == 'annulee'  ? 'fz-badge-gray' : 'fz-badge-orange'}">
+                                                <h:outputText value="#{s.statut.name() == 'terminee' ? 'Terminée' :
+                                                    s.statut.name() == 'annulee' ? 'Annulée' : 'Planifiée'}"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{empty coachBean.seancesPassees}" layout="block">
+                        <div class="fz-empty" style="padding:32px">
+                            <div class="fz-empty-sub">Aucune séance passée.</div>
+                        </div>
+                    </h:panelGroup>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════
+                 MES MEMBRES
+            ══════════════════════════ -->
+            <div class="fz-section" id="section-membres">
+                <div class="fz-section-header">
+                    <div class="fz-section-eyebrow fz-eyebrow-blue"><span>Suivi</span></div>
+                    <div class="fz-section-title">MES <span class="blue">MEMBRES</span></div>
+                </div>
+
+                <h:panelGroup rendered="#{not empty coachBean.tousLesMembres}" layout="block">
+                    <div class="fz-membres-grid">
+                        <ui:repeat value="#{coachBean.tousLesMembres}" var="m">
+                            <div class="fz-membre-card">
+                                <div class="fz-membre-avatar">
+                                    <h:outputText value="#{m.utilisateur.initiales}"/>
+                                </div>
+                                <div class="fz-membre-info">
+                                    <div class="fz-membre-name">
+                                        <h:outputText value="#{m.utilisateur.prenom} #{m.utilisateur.nom}"/>
+                                    </div>
+                                    <div class="fz-membre-email">
+                                        <h:outputText value="#{m.utilisateur.email}"/>
+                                    </div>
+                                </div>
+                                <div class="fz-membre-stats">
+                                    <div class="fz-membre-stat">
+                                        <div class="fz-membre-stat-val">
+                                            <h:outputText value="#{coachBean.getNbSeancesMembre(m.id)}"/>
+                                        </div>
+                                        <div class="fz-membre-stat-lbl">Séances</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{empty coachBean.tousLesMembres}" layout="block">
+                    <div class="fz-empty">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                        <div class="fz-empty-title">Aucun membre</div>
+                        <div class="fz-empty-sub">Vos membres apparaîtront ici dès qu'ils s'inscriront à vos séances.</div>
+                    </div>
+                </h:panelGroup>
+            </div>
+
+            <!-- ══════════════════════════
+                 MON PROFIL
+            ══════════════════════════ -->
+            <div class="fz-section" id="section-profil">
+                <div class="fz-section-header">
+                    <div class="fz-section-eyebrow fz-eyebrow-blue"><span>Compte</span></div>
+                    <div class="fz-section-title">MON <span class="blue">PROFIL</span></div>
+                </div>
+
+                <div class="fz-profile-wrap">
+                    <div class="fz-profile-card fz-profile-card-coach">
+                        <div class="fz-profile-avatar-lg fz-avatar-coach-lg">
+                            <h:outputText value="#{authBean.initiales}"/>
+                        </div>
+                        <div class="fz-profile-fullname">
+                            <h:outputText value="#{authBean.utilisateurConnecte.prenom} #{authBean.utilisateurConnecte.nom}"/>
+                        </div>
+                        <div class="fz-profile-badge fz-profile-badge-coach">Coach</div>
+                        <div class="fz-profile-info-grid">
+                            <div class="fz-profile-row">
+                                <div class="fz-profile-row-label">Email</div>
+                                <div class="fz-profile-row-val">
+                                    <h:outputText value="#{authBean.utilisateurConnecte.email}"/>
+                                </div>
+                            </div>
+                            <div class="fz-profile-row">
+                                <div class="fz-profile-row-label">Spécialité</div>
+                                <div class="fz-profile-row-val" style="color:var(--blue-lt)">
+                                    <h:outputText value="#{coachBean.coach.specialite}"/>
+                                </div>
+                            </div>
+                            <div class="fz-profile-row">
+                                <div class="fz-profile-row-label">Membre depuis</div>
+                                <div class="fz-profile-row-val">
+                                    <h:outputText value="#{authBean.utilisateurConnecte.dateCreation}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" type="localDateTime"/>
+                                    </h:outputText>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fz-profile-details">
+                        <h3>Informations personnelles</h3>
+                        <div class="fz-detail-grid">
+                            <div class="fz-detail-field">
+                                <label>Nom</label>
+                                <div class="fz-detail-val">
+                                    <h:outputText value="#{authBean.utilisateurConnecte.nom}"/>
+                                </div>
+                            </div>
+                            <div class="fz-detail-field">
+                                <label>Prénom</label>
+                                <div class="fz-detail-val">
+                                    <h:outputText value="#{authBean.utilisateurConnecte.prenom}"/>
+                                </div>
+                            </div>
+                            <div class="fz-detail-field">
+                                <label>Email</label>
+                                <div class="fz-detail-val">
+                                    <h:outputText value="#{authBean.utilisateurConnecte.email}"/>
+                                </div>
+                            </div>
+                            <div class="fz-detail-field">
+                                <label>Téléphone</label>
+                                <div class="fz-detail-val">
+                                    <h:outputText value="#{empty authBean.utilisateurConnecte.telephone ? 'Non renseigné' : authBean.utilisateurConnecte.telephone}"/>
+                                </div>
+                            </div>
+                            <div class="fz-detail-field">
+                                <label>Spécialité</label>
+                                <div class="fz-detail-val" style="color:var(--blue-lt)">
+                                    <h:outputText value="#{coachBean.coach.specialite}"/>
+                                </div>
+                            </div>
+                            <div class="fz-detail-field">
+                                <label>Date d'inscription</label>
+                                <div class="fz-detail-val">
+                                    <h:outputText value="#{authBean.utilisateurConnecte.dateCreation}">
+                                        <f:convertDateTime pattern="dd MMMM yyyy" type="localDateTime" locale="fr"/>
+                                    </h:outputText>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <h3 style="margin-top:24px">Description / Bio</h3>
+                        <div class="fz-detail-val" style="margin-top:12px;line-height:1.7;color:var(--muted)">
+                            <h:outputText value="#{empty coachBean.coach.description ? 'Aucune description renseignée.' : coachBean.coach.description}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /fz-content -->
+    </main>
+</div>
+
+<h:outputScript>
+//<![CDATA[
+function showSection(id, navItem) {
+    document.querySelectorAll('.fz-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.fz-nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('section-' + id).classList.add('active');
+    if (navItem) navItem.classList.add('active');
+    var titles = {
+        accueil:  'Tableau de bord',
+        seances:  'Mes Séances',
+        membres:  'Mes Membres',
+        profil:   'Mon Profil'
+    };
+    document.getElementById('topbarTitle').innerHTML =
+        'Espace <span>' + titles[id] + '</span>';
+}
+
+(function () {
+    // Date topbar
+    var days   = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    var months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    var d = new Date();
+    document.getElementById('topbarDate').textContent =
+        days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+
+    // Message motivation coach
+    var h = d.getHours();
+    var prenom = document.querySelector('.fz-welcome-name span');
+    var nom = prenom ? prenom.textContent.trim() : '';
+    var messages;
+    if (h >= 5 && h < 12) {
+        messages = [
+            '☀️ Bonne matinée ' + nom + ' ! Prêt(e) à motiver vos membres aujourd\'hui ?',
+            '💪 Nouvelle journée, nouvelles performances à atteindre, ' + nom + ' !',
+            '🏋️ Le coach donne l\'exemple — bonne séance aujourd\'hui, ' + nom + ' !'
+        ];
+    } else if (h >= 12 && h < 18) {
+        messages = [
+            '⚡ Après-midi productif, ' + nom + ' ! Vos membres comptent sur vous.',
+            '🔥 L\'énergie de l\'après-midi, c\'est vous qui l\'apportez, ' + nom + ' !',
+            '💥 Un bon coach inspire — continuez comme ça, ' + nom + ' !'
+        ];
+    } else {
+        messages = [
+            '🌙 Bonne soirée ' + nom + ' ! Dernière séance de la journée ?',
+            '✨ Les grands coachs ne s\'arrêtent jamais vraiment, ' + nom + ' !',
+            '🏃 Soir de séance ? Vos membres sont prêts, ' + nom + ' !'
+        ];
+    }
+    var msg = messages[Math.floor(Math.random() * messages.length)];
+    var el = document.getElementById('fz-motivation');
+    if (el) el.textContent = msg;
+
+    // Bar chart — données simulées (à remplacer par JSF réel)
+    var data = [2, 4, 3, 5];
+    var max   = Math.max.apply(null, data);
+    var total = data.reduce(function(a,b){return a+b;}, 0);
+    var barsEl  = document.getElementById('fz-bars');
+    var totalEl = document.getElementById('fz-chart-total');
+    if (barsEl) {
+        barsEl.innerHTML = data.map(function(v) {
+            var pct = max > 0 ? Math.round((v / max) * 100) : 0;
+            return '<div class="fz-bar-item">' +
+                '<div class="fz-bar-count">' + v + '</div>' +
+                '<div class="fz-bar-col">' +
+                    '<div class="fz-bar-fill fz-bar-fill-blue" style="height:0" data-pct="' + pct + '"></div>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+        setTimeout(function() {
+            barsEl.querySelectorAll('.fz-bar-fill').forEach(function(b) {
+                b.style.height = b.dataset.pct + '%';
+            });
+        }, 80);
+    }
+    if (totalEl) totalEl.textContent = total;
+})();
+//]]>
+</h:outputScript>
+</h:body>
+</html>

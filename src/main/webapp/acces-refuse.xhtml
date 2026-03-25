@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html">
+<h:head>
+    <meta charset="UTF-8"/>
+    <title>FITZONE — Accès refusé</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&amp;family=Barlow&amp;display=swap" rel="stylesheet"/>
+    <style>
+        body { background:#0a0a0a; color:#fff; font-family:'Barlow',sans-serif;
+               display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; }
+        .box { text-align:center; }
+        .code { font-family:'Barlow Condensed',sans-serif; font-size:110px; font-weight:900; color:#e05a00; line-height:1; }
+        .msg  { font-size:18px; color:rgba(255,255,255,0.5); margin:16px 0 32px; }
+        .btn  { display:inline-block; padding:13px 30px; background:#e05a00; border-radius:4px;
+                color:#fff; text-decoration:none; font-family:'Barlow Condensed',sans-serif;
+                font-size:15px; font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+        .btn:hover { background:#c94e00; }
+    </style>
+</h:head>
+<h:body>
+    <div class="box">
+        <div class="code">403</div>
+        <div class="msg">Accès refusé — vous n'avez pas les droits pour cette page.</div>
+        <h:link value="RETOUR CONNEXION" outcome="/login" styleClass="btn"/>
+    </div>
+</h:body>
+</html>
