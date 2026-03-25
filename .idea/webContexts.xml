@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebContextManager">
+    <option name="state">
+      <map>
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/acces-refuse.xhtml" value="file://$PROJECT_DIR$/src/main/webapp" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/coach/dashboard.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/coach" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/landingpage.xhtml" value="file://$PROJECT_DIR$/src/main/webapp" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/login.xhtml" value="file://$PROJECT_DIR$/src/main/webapp" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/membre/dashboard.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/membre" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/register.xhtml" value="file://$PROJECT_DIR$/src/main/webapp" />
+      </map>
+    </option>
+  </component>
+</project>

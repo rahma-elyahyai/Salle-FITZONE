@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FITZONE — Connexion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Inter:wght@400;500;600&amp;display=swap"
+          rel="stylesheet"/>
+    <h:outputStylesheet name="css/login.css"/>
+</h:head>
+
+<h:body>
+<div class="fz-root">
+
+    <!-- ════════════════════════════════════
+         PANNEAU GAUCHE
+    ════════════════════════════════════ -->
+    <div class="fz-left-panel">
+        <div class="fz-grid"></div>
+        <div class="fz-glow"></div>
+        <div class="fz-accent-line"></div>
+
+        <div class="fz-left-content">
+
+            <!-- Logo réel -->
+            <div class="fz-logo-wrap">
+                <h:graphicImage library="images" name="logo.png"
+                                styleClass="fz-logo-img"
+                                alt="FITZONE"/>
+            </div>
+
+            <!-- Badge -->
+            <div class="fz-badge">Club Management</div>
+
+            <!-- Tagline -->
+            <p class="fz-tagline">
+                Gérez vos <strong>séances</strong>,
+                vos <strong>membres</strong> et vos
+                <strong>abonnements</strong> depuis
+                un seul espace sécurisé.
+            </p>
+
+            <!-- Stats -->
+            <div class="fz-stats">
+                <div class="fz-stat">
+                    <div class="fz-stat-val">2</div>
+                    <div class="fz-stat-lbl">Rôles</div>
+                </div>
+                <div class="fz-stat">
+                    <div class="fz-stat-val">100%</div>
+                    <div class="fz-stat-lbl">Sécurisé</div>
+                </div>
+                <div class="fz-stat">
+                    <div class="fz-stat-val">∞</div>
+                    <div class="fz-stat-lbl">Séances</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fz-version">v2.0 · 2025</div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         PANNEAU DROIT — Formulaire
+    ════════════════════════════════════ -->
+    <div class="fz-right-panel">
+        <div class="fz-form-box">
+
+            <!-- Logo (mobile uniquement) -->
+            <div class="fz-right-logo">
+                <h:graphicImage library="images" name="logo.png"
+                                styleClass="fz-right-logo-img"
+                                alt="FITZONE"/>
+            </div>
+
+            <!-- Header -->
+            <div class="fz-eyebrow">
+                <div class="fz-eyebrow-dot"></div>
+                <div class="fz-eyebrow-text">Bienvenue</div>
+            </div>
+            <div class="fz-title">SE<br/><span>CONNECTER</span></div>
+            <p class="fz-subtitle">
+                Accédez à votre espace FITZONE avec votre email et mot de passe.
+            </p>
+
+            <!-- Messages globaux JSF -->
+            <h:messages globalOnly="true"
+                        styleClass="fz-messages"
+                        errorClass="fz-msg-error"
+                        infoClass="fz-msg-info"
+                        warnClass="fz-msg-error"/>
+
+            <h:form id="loginForm" styleClass="fz-form">
+
+                <!-- Email -->
+                <div class="fz-field">
+                    <label class="fz-label" for="loginForm:email">
+                        Adresse email
+                    </label>
+                    <div class="fz-input-wrap">
+                        <span class="fz-icon">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                <polyline points="2,4 12,13 22,4"/>
+                            </svg>
+                        </span>
+                        <h:inputText id="email"
+                                     value="#{authBean.email}"
+                                     styleClass="fz-input"
+                                     placeholder="votre@email.ma"
+                                     required="true"
+                                     requiredMessage="Email obligatoire">
+                            <f:validateRegex
+                                pattern="^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"/>
+                        </h:inputText>
+                    </div>
+                    <h:message for="email" styleClass="fz-field-err"/>
+                </div>
+
+                <!-- Mot de passe -->
+                <div class="fz-field">
+                    <div class="fz-label-row">
+                        <label class="fz-label" for="loginForm:mdp">
+                            Mot de passe
+                        </label>
+                        <a class="fz-forgot-inline" href="#">Oublié ?</a>
+                    </div>
+                    <div class="fz-input-wrap">
+                        <span class="fz-icon">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                        </span>
+                        <h:inputSecret id="mdp"
+                                       value="#{authBean.mdp}"
+                                       styleClass="fz-input"
+                                       placeholder="••••••••"
+                                       required="true"
+                                       requiredMessage="Mot de passe obligatoire"
+                                       redisplay="false"/>
+                    </div>
+                    <h:message for="mdp" styleClass="fz-field-err"/>
+                </div>
+
+                <!-- Submit -->
+                <h:commandButton value="SE CONNECTER"
+                                 action="#{authBean.login}"
+                                 styleClass="fz-btn"/>
+
+                <div class="fz-divider">ou</div>
+
+                <!-- Lien inscription -->
+                <div class="fz-switch">
+                    Pas encore de compte ?&#160;
+                    <h:link value="Créer un compte" outcome="/register"/>
+                </div>
+
+            </h:form>
+        </div>
+    </div>
+
+</div>
+</h:body>
+</html>

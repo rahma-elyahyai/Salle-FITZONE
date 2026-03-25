@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    beans.xml — WildFly 29 / Jakarta EE 10 / CDI 4.0
+    Emplacement OBLIGATOIRE : src/main/webapp/WEB-INF/beans.xml
+
+    version="4.0" est requis pour CDI 4 (Jakarta EE 10)
+    bean-discovery-mode="annotated" = seules les classes annotées
+    (@Named, @SessionScoped, @ApplicationScoped...) sont des beans CDI
+-->
+<beans xmlns="https://jakarta.ee/xml/ns/jakartaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                           https://jakarta.ee/xml/ns/jakartaee/beans_4_0.xsd"
+       version="4.0"
+       bean-discovery-mode="annotated">
+</beans>
