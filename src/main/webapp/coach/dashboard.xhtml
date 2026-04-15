@@ -8,15 +8,14 @@
       xmlns:pt="jakarta.faces.passthrough"
       lang="fr">
 <h:head>
-    <meta charset="UTF-8"></meta>
-    <meta name="viewport" content="width=device-width,initial-scale=1"></meta>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>FITZONE — Coach</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 
     <style>
         *{box-sizing:border-box;margin:0;padding:0}
         body{background:#0c0c0e;color:#f0f0f0;font-family:'Inter',sans-serif;font-size:14px}
-        svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
         a{color:inherit;text-decoration:none}
         .shell{display:flex;min-height:100vh}
         .sb{width:260px;flex-shrink:0;background:#141416;border-right:1px solid #2a2a2e;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
@@ -67,7 +66,7 @@
         .stat:hover{border-color:#e67e22}
         .stat::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;background:rgba(230,126,34,.15);transform:translate(20px,-20px)}
         .stat-ic{width:40px;height:40px;border-radius:10px;background:rgba(230,126,34,.15);border:1px solid rgba(230,126,34,.3);display:flex;align-items:center;justify-content:center;color:#e67e22;margin-bottom:14px}
-        .stat-ic svg{width:18px;height:18px}
+        .stat-ic svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
         .stat-v{font-size:28px;font-weight:700;color:#fff;line-height:1}
         .stat-l{font-size:12px;color:#888;margin-top:4px}
         .stat-t{font-size:11px;color:#2ecc71;margin-top:8px}
@@ -96,7 +95,7 @@
         .sc-bd{padding:14px 16px}
         .sc-meta{display:flex;flex-direction:column;gap:6px}
         .sc-mr{display:flex;align-items:center;gap:8px;font-size:12px;color:#888}
-        .sc-mr svg{width:13px;height:13px;color:#e67e22}
+        .sc-mr svg{width:13px;height:13px;fill:none;stroke:#e67e22;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
         .sc-ft{padding:12px 16px;border-top:1px solid #2a2a2e;display:flex;gap:8px;justify-content:flex-end}
         .twrap{background:#141416;border:1px solid #2a2a2e;border-radius:14px;overflow:hidden;margin-bottom:24px}
         .thd{padding:16px 20px;border-bottom:1px solid #2a2a2e;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:space-between}
@@ -147,11 +146,9 @@
         .ab-col{flex:1;width:100%;background:#242428;border-radius:4px 4px 0 0;display:flex;align-items:flex-end;overflow:hidden;min-height:4px}
         .ab-fill{width:100%;background:linear-gradient(to top,#e67e22,#d35400);border-radius:4px 4px 0 0;transition:height .6s ease;min-height:4px}
         .empty{text-align:center;padding:48px 20px;color:#888}
-        .empty svg{width:40px;height:40px;color:#555;margin-bottom:12px}
+        .empty svg{width:40px;height:40px;color:#555;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-bottom:12px}
         .empty-ti{font-size:15px;font-weight:600;color:#f0f0f0;margin-bottom:6px}
         .empty-sub{font-size:13px}
-
-        /* ── Membres cards ── */
         .membres-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px}
         .mcard{background:#141416;border:1px solid #2a2a2e;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;transition:border-color .2s}
         .mcard:hover{border-color:#e67e22}
@@ -162,12 +159,10 @@
         .mcard-email{font-size:11px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .mcard-body{display:flex;flex-direction:column;gap:6px;font-size:12px;color:#888;border-top:1px solid #2a2a2e;padding-top:12px}
         .mcard-row{display:flex;align-items:center;gap:8px}
-        .mcard-row svg{width:13px;height:13px;color:#e67e22;flex-shrink:0}
+        .mcard-row svg{width:13px;height:13px;fill:none;stroke:#e67e22;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
         .mcard-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #2a2a2e;padding-top:12px}
-
-        /* Stats membres en haut */
         .membres-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
-
+        .nav-it svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
         @media(max-width:1100px){
             .stats{grid-template-columns:repeat(2,1fr)}
             .g2{grid-template-columns:1fr}
@@ -193,7 +188,6 @@
             membres: 'Mes \u003cspan\u003eMembres\u003c/span\u003e',
             profil: 'Mon \u003cspan\u003eProfil\u003c/span\u003e'
         };
-
         function showSection(id, navEl) {
             document.querySelectorAll('.sec').forEach(function(s){ s.classList.remove('active'); });
             document.querySelectorAll('.nav-it').forEach(function(n){ n.classList.remove('active'); });
@@ -203,7 +197,6 @@
             var ttl = document.getElementById('ttl');
             if (ttl) ttl.innerHTML = SECTION_TITLES[id] || id;
         }
-
         document.addEventListener('DOMContentLoaded', function() {
             var active = document.querySelector('.sec.active');
             if (!active) {
@@ -217,6 +210,7 @@
 <h:body>
     <div class="shell">
 
+        <!-- ══════════════ SIDEBAR ══════════════ -->
         <aside class="sb">
             <div>
                 <div class="sb-logo">
@@ -236,21 +230,26 @@
 
                 <nav>
                     <div class="nav-sec">NAVIGATION</div>
+
                     <div class="nav-it active" onclick="showSection('accueil',this)">
-                        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+                        <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24' style='width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round'&gt;&lt;path d='M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/&gt;&lt;polyline points='9,22 9,12 15,12 15,22'/&gt;&lt;/svg&gt;"/>
                         Tableau de bord
                     </div>
+
                     <div class="nav-it" onclick="showSection('seances',this)">
-                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24' style='width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round'&gt;&lt;rect x='3' y='4' width='18' height='18' rx='2'/&gt;&lt;line x1='16' y1='2' x2='16' y2='6'/&gt;&lt;line x1='8' y1='2' x2='8' y2='6'/&gt;&lt;line x1='3' y1='10' x2='21' y2='10'/&gt;&lt;/svg&gt;"/>
                         Mes Séances
                     </div>
+
                     <div class="nav-it" onclick="showSection('membres',this)">
-                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24' style='width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round'&gt;&lt;path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/&gt;&lt;circle cx='9' cy='7' r='4'/&gt;&lt;path d='M23 21v-2a4 4 0 0 0-3-3.87'/&gt;&lt;path d='M16 3.13a4 4 0 0 1 0 7.75'/&gt;&lt;/svg&gt;"/>
                         Mes Membres
                     </div>
+
                     <div class="nav-div"></div>
+
                     <div class="nav-it" onclick="showSection('profil',this)">
-                        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24' style='width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round'&gt;&lt;path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/&gt;&lt;circle cx='12' cy='7' r='4'/&gt;&lt;/svg&gt;"/>
                         Mon Profil
                     </div>
                 </nav>
@@ -259,7 +258,7 @@
             <div class="sb-foot">
                 <h:form id="lf">
                     <button type="button" class="logout" onclick="document.getElementById('lf:lb').click()">
-                        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24' style='width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round'&gt;&lt;path d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/&gt;&lt;polyline points='16 17 21 12 16 7'/&gt;&lt;line x1='21' y1='12' x2='9' y2='12'/&gt;&lt;/svg&gt;"/>
                         Déconnexion
                     </button>
                     <h:commandButton id="lb" action="#{authBean.logout}" styleClass="hidden-btn"/>
@@ -267,7 +266,8 @@
             </div>
         </aside>
 
-        <main class="main">
+        <!-- ══════════════ MAIN ══════════════ -->
+        <div class="main">
             <div class="topbar">
                 <div class="topbar-title" id="ttl">Tableau de <span>bord</span></div>
                 <div class="topbar-r">
@@ -291,7 +291,7 @@
 
                 <!-- ══════════════ ACCUEIL ══════════════ -->
                 <div class="sec active" id="sec-accueil" data-sec="accueil">
-                    <div class="motiv" id="motiv"></div>
+                    <div class="motiv" id="motiv"/>
 
                     <div class="banner">
                         <div>
@@ -303,34 +303,38 @@
                     </div>
 
                     <div class="stats">
+                        <!-- Stat 1 : Total séances -->
                         <div class="stat">
                             <div class="stat-ic">
-                                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;rect x='3' y='4' width='18' height='18' rx='2'/&gt;&lt;line x1='16' y1='2' x2='16' y2='6'/&gt;&lt;line x1='8' y1='2' x2='8' y2='6'/&gt;&lt;line x1='3' y1='10' x2='21' y2='10'/&gt;&lt;/svg&gt;"/>
                             </div>
                             <div class="stat-v"><h:outputText value="#{coachDashboardBean.totalSeances}"/></div>
                             <div class="stat-l">Total séances</div>
                             <div class="stat-t">↑ Planifiées : <h:outputText value="#{coachDashboardBean.seancesPlanifiees}"/></div>
                         </div>
 
+                        <!-- Stat 2 : Membres actifs -->
                         <div class="stat">
                             <div class="stat-ic">
-                                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                                <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/&gt;&lt;circle cx='9' cy='7' r='4'/&gt;&lt;/svg&gt;"/>
                             </div>
                             <div class="stat-v"><h:outputText value="#{coachDashboardBean.totalMembres}"/></div>
                             <div class="stat-l">Membres actifs</div>
                         </div>
 
+                        <!-- Stat 3 : Séances aujourd'hui -->
                         <div class="stat">
                             <div class="stat-ic">
-                                <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;polyline points='22 12 18 12 15 21 9 3 6 12 2 12'/&gt;&lt;/svg&gt;"/>
                             </div>
                             <div class="stat-v"><h:outputText value="#{coachDashboardBean.seancesAujourdhui}"/></div>
                             <div class="stat-l">Séances aujourd'hui</div>
                         </div>
 
+                        <!-- Stat 4 : Heures ce mois -->
                         <div class="stat">
                             <div class="stat-ic">
-                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;circle cx='12' cy='12' r='10'/&gt;&lt;polyline points='12 6 12 12 16 14'/&gt;&lt;/svg&gt;"/>
                             </div>
                             <div class="stat-v"><h:outputText value="#{coachDashboardBean.heuresEntrainement}"/>h</div>
                             <div class="stat-l">Heures ce mois</div>
@@ -338,6 +342,7 @@
                     </div>
 
                     <div class="g2">
+                        <!-- Prochaines séances -->
                         <div class="card">
                             <div class="card-hd">
                                 <span class="card-ti">Prochaines séances</span>
@@ -351,7 +356,8 @@
                                             <div class="si-inf">
                                                 <div class="si-ti"><h:outputText value="#{s.titre}"/></div>
                                                 <div class="si-me">
-                                                    <h:outputText value="#{s.salle != null ? s.salle.nomSalle : 'Salle non définie'}"/>                                                    <span>⏱ <h:outputText value="#{s.duree}"/> min</span>
+                                                    <span>📍 <h:outputText value="#{s.salle.nomSalle}"/></span>
+                                                    <span>⏱ <h:outputText value="#{s.duree}"/> min</span>
                                                     <span>👥 <h:outputText value="#{s.capaciteMaximale}"/> places</span>
                                                 </div>
                                             </div>
@@ -372,22 +378,83 @@
                             </div>
                         </div>
 
+
+                        <!-- Activité mensuelle -->
                         <div class="card">
-                            <div class="card-hd"><span class="card-ti">Activité mensuelle</span></div>
-                            <div class="card-bd">
-                                <div style="font-size:28px;font-weight:700;color:#e67e22;margin-bottom:4px" id="chart-tot">—</div>
-                                <div style="font-size:12px;color:#888;margin-bottom:16px">séances ce mois</div>
-                                <div class="abars" id="abars"></div>
-                                <div style="display:flex;justify-content:space-between;margin-top:6px">
-                                    <span style="font-size:10px;color:#555">S1</span>
-                                    <span style="font-size:10px;color:#555">S2</span>
-                                    <span style="font-size:10px;color:#555">S3</span>
-                                    <span style="font-size:10px;color:#555">S4</span>
+                            <div class="card-hd">
+                                <span class="card-ti">Activité mensuelle</span>
+                                <span class="cbadge">Avril 2026</span>
+                            </div>
+                            <div class="card-bd" style="padding:16px">
+
+                                <!-- Barres par semaine (données réelles) -->
+                                <div style="font-size:11px;color:#888;margin-bottom:10px;letter-spacing:1px">SÉANCES PAR SEMAINE</div>
+                                <div style="display:flex;align-items:flex-end;gap:10px;height:80px;margin-bottom:8px">
+                                    <ui:repeat value="#{coachDashboardBean.seancesParSemaineAvecStatut}" var="nb" varStatus="st">
+                                        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+
+                                            <!-- Total -->
+                                            <div style="font-size:10px;color:#e67e22;font-weight:700">
+                                                #{nb[0] + nb[1]}
+                                            </div>
+
+                                            <!-- Barre empilée : vert en bas, orange au-dessus -->
+                                            <div style="width:100%;background:#242428;border-radius:4px;overflow:hidden;height:50px;display:flex;flex-direction:column;justify-content:flex-end">
+                                                <h:outputText escape="false"
+                                                              value="&lt;div style='width:100%;height:#{coachDashboardBean.maxSemaine > 0 ? (nb[0] * 50 / coachDashboardBean.maxSemaine) : 0}px;background:linear-gradient(to top,#e67e22,#d35400);'&gt;&lt;/div&gt;"/>
+                                                <h:outputText escape="false"
+                                                              value="&lt;div style='width:100%;height:#{coachDashboardBean.maxSemaine > 0 ? (nb[1] * 50 / coachDashboardBean.maxSemaine) : 0}px;background:#2ecc71;'&gt;&lt;/div&gt;"/>
+                                            </div>
+
+                                            <!-- Label -->
+                                            <div style="font-size:9px;color:#555;text-align:center;line-height:1.3">
+                                                S<h:outputText value="#{st.index + 1}"/><br/>
+                                                <h:outputText value="#{coachDashboardBean.datesSemaines[st.index]}"/>
+                                            </div>
+                                        </div>
+                                    </ui:repeat>
                                 </div>
+
+                                <div style="height:1px;background:#2a2a2e;margin:14px 0"></div>
+
+                                <!-- Répartition des statuts (données réelles) -->
+                                <div style="font-size:11px;color:#888;margin-bottom:10px;margin-top:10px;letter-spacing:1px">RÉPARTITION DES STATUTS</div>
+
+                                <div style="display:flex;gap:4px;margin-bottom:10px;border-radius:4px;overflow:hidden;height:8px">
+                                    <h:outputText escape="false"
+                                                  value="&lt;div style='flex:#{coachDashboardBean.seancesPlanifiees};background:#e67e22;min-width:4px'&gt;&lt;/div&gt;"/>
+                                    <h:outputText escape="false"
+                                                  value="&lt;div style='flex:#{coachDashboardBean.seancesTerminees};background:#2ecc71;min-width:4px'&gt;&lt;/div&gt;"/>
+                                    <h:outputText escape="false"
+                                                  value="&lt;div style='flex:#{coachDashboardBean.totalSeances - coachDashboardBean.seancesPlanifiees - coachDashboardBean.seancesTerminees};background:#555;min-width:#{coachDashboardBean.totalSeances - coachDashboardBean.seancesPlanifiees - coachDashboardBean.seancesTerminees > 0 ? 4 : 0}px'&gt;&lt;/div&gt;"/>
+                                </div>
+
+                                <div style="display:flex;gap:16px;flex-wrap:wrap">
+                                    <div style="display:flex;align-items:center;gap:6px">
+                                        <div style="width:8px;height:8px;border-radius:50%;background:#e67e22;flex-shrink:0"></div>
+                                        <span style="font-size:11px;color:#888">Planifiées —
+                    <h:outputText value="#{coachDashboardBean.seancesPlanifiees}"/>
+                </span>
+                                    </div>
+                                    <div style="display:flex;align-items:center;gap:6px">
+                                        <div style="width:8px;height:8px;border-radius:50%;background:#2ecc71;flex-shrink:0"></div>
+                                        <span style="font-size:11px;color:#888">Terminées —
+                    <h:outputText value="#{coachDashboardBean.seancesTerminees}"/>
+                </span>
+                                    </div>
+                                    <div style="display:flex;align-items:center;gap:6px">
+                                        <div style="width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0"></div>
+                                        <span style="font-size:11px;color:#888">Annulées —
+                    <h:outputText value="#{coachDashboardBean.totalSeances - coachDashboardBean.seancesPlanifiees - coachDashboardBean.seancesTerminees}"/>
+                </span>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
 
+                    <!-- Dernières séances -->
                     <div class="twrap">
                         <div class="thd">
                             Dernières séances
@@ -395,7 +462,16 @@
                         </div>
                         <h:panelGroup rendered="#{not empty coachDashboardBean.dernieresSeances}" layout="block">
                             <table>
-                                <thead><tr><th>TITRE</th><th>CATÉGORIE</th><th>DATE</th><th>SALLE</th><th>CAP.</th><th>STATUT</th></tr></thead>
+                                <thead>
+                                <tr>
+                                    <th>TITRE</th>
+                                    <th>CATÉGORIE</th>
+                                    <th>DATE</th>
+                                    <th>SALLE</th>
+                                    <th>CAP.</th>
+                                    <th>STATUT</th>
+                                </tr>
+                                </thead>
                                 <tbody>
                                 <ui:repeat value="#{coachDashboardBean.dernieresSeances}" var="s">
                                     <tr>
@@ -409,9 +485,9 @@
                                         <td><h:outputText value="#{s.salle.nomSalle}"/></td>
                                         <td><h:outputText value="#{s.capaciteMaximale}"/></td>
                                         <td>
-                                        <span class="badge #{s.statut.toString() eq 'planifiee' ? 'bo' : s.statut.toString() eq 'terminee' ? 'bg' : 'bx'}">
-                                            <h:outputText value="#{s.statut}"/>
-                                        </span>
+                                            <span class="badge #{s.statut.toString() eq 'planifiee' ? 'bo' : s.statut.toString() eq 'terminee' ? 'bg' : 'bx'}">
+                                                <h:outputText value="#{s.statut}"/>
+                                            </span>
                                         </td>
                                     </tr>
                                 </ui:repeat>
@@ -455,21 +531,21 @@
                                         <div class="sc-bd">
                                             <div class="sc-meta">
                                                 <div class="sc-mr">
-                                                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                                    <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;rect x='3' y='4' width='18' height='18' rx='2'/&gt;&lt;line x1='16' y1='2' x2='16' y2='6'/&gt;&lt;line x1='8' y1='2' x2='8' y2='6'/&gt;&lt;line x1='3' y1='10' x2='21' y2='10'/&gt;&lt;/svg&gt;"/>
                                                     <h:outputText value="#{s.dateHeure}">
                                                         <f:convertDateTime pattern="dd/MM/yyyy à HH:mm" type="localDateTime"/>
                                                     </h:outputText>
                                                 </div>
                                                 <div class="sc-mr">
-                                                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                                    <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;circle cx='12' cy='12' r='10'/&gt;&lt;polyline points='12 6 12 12 16 14'/&gt;&lt;/svg&gt;"/>
                                                     <h:outputText value="#{s.duree}"/> min
                                                 </div>
                                                 <div class="sc-mr">
-                                                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                                    <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;path d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'/&gt;&lt;circle cx='12' cy='10' r='3'/&gt;&lt;/svg&gt;"/>
                                                     <h:outputText value="#{s.salle.nomSalle}"/>
                                                 </div>
                                                 <div class="sc-mr">
-                                                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                                                    <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/&gt;&lt;circle cx='9' cy='7' r='4'/&gt;&lt;/svg&gt;"/>
                                                     <h:outputText value="#{s.capaciteMaximale}"/> places
                                                 </div>
                                             </div>
@@ -486,7 +562,7 @@
                                                              actionListener="#{coachDashboardBean.supprimerSeance(s)}"
                                                              update="fsg fg:msgs"
                                                              process="@this">
-                                                <p:confirm header="Supprimer ?" message="Supprimer «&#160;#{s.titre}&#160;» ?" icon="pi pi-exclamation-triangle"/>
+                                                <p:confirm header="Supprimer ?" message="Supprimer « #{s.titre} » ?" icon="pi pi-exclamation-triangle"/>
                                             </p:commandButton>
                                         </div>
                                     </div>
@@ -496,9 +572,9 @@
 
                         <h:panelGroup rendered="#{empty coachDashboardBean.toutesSeances}" layout="block">
                             <div class="empty">
-                                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24' style='width:40px;height:40px;color:#555;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto 12px'&gt;&lt;rect x='3' y='4' width='18' height='18' rx='2'/&gt;&lt;line x1='16' y1='2' x2='16' y2='6'/&gt;&lt;line x1='8' y1='2' x2='8' y2='6'/&gt;&lt;line x1='3' y1='10' x2='21' y2='10'/&gt;&lt;/svg&gt;"/>
                                 <div class="empty-ti">Aucune séance créée</div>
-                                <div class="empty-sub">Cliquez sur «&#160;+ Nouvelle séance&#160;» pour commencer.</div>
+                                <div class="empty-sub">Cliquez sur « + Nouvelle séance » pour commencer.</div>
                             </div>
                         </h:panelGroup>
 
@@ -592,37 +668,34 @@
                         <div class="sec-ti">Mes <span>Membres</span></div>
                     </div>
 
-                    <!-- Stats rapides membres -->
                     <div class="membres-stats">
                         <div class="stat">
                             <div class="stat-ic">
-                                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                                <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/&gt;&lt;circle cx='9' cy='7' r='4'/&gt;&lt;/svg&gt;"/>
                             </div>
                             <div class="stat-v"><h:outputText value="#{coachDashboardBean.totalMembres}"/></div>
                             <div class="stat-l">Total membres inscrits</div>
                         </div>
                         <div class="stat">
                             <div class="stat-ic">
-                                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;rect x='3' y='4' width='18' height='18' rx='2'/&gt;&lt;line x1='16' y1='2' x2='16' y2='6'/&gt;&lt;line x1='8' y1='2' x2='8' y2='6'/&gt;&lt;line x1='3' y1='10' x2='21' y2='10'/&gt;&lt;/svg&gt;"/>
                             </div>
                             <div class="stat-v"><h:outputText value="#{coachDashboardBean.totalSeances}"/></div>
                             <div class="stat-l">Séances proposées</div>
                         </div>
                         <div class="stat">
                             <div class="stat-ic">
-                                <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;polyline points='22 12 18 12 15 21 9 3 6 12 2 12'/&gt;&lt;/svg&gt;"/>
                             </div>
                             <div class="stat-v"><h:outputText value="#{coachDashboardBean.seancesPlanifiees}"/></div>
                             <div class="stat-l">Séances planifiées</div>
                         </div>
                     </div>
 
-                    <!-- Grille de cards membres (données réelles via membre + utilisateur + reservation) -->
                     <h:panelGroup rendered="#{not empty coachDashboardBean.membres}" layout="block">
                         <div class="membres-grid">
                             <ui:repeat value="#{coachDashboardBean.membres}" var="m">
                                 <div class="mcard">
-                                    <!-- Avatar + nom -->
                                     <div class="mcard-top">
                                         <div class="mcard-av">
                                             <h:outputText value="#{m.utilisateur.prenom.substring(0,1)}#{m.utilisateur.nom.substring(0,1)}"/>
@@ -636,23 +709,20 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- Infos issues de la BD -->
                                     <div class="mcard-body">
                                         <div class="mcard-row">
-                                            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.8A16 16 0 0 0 13 13.87l.95-.94a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                            <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;path d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.8A16 16 0 0 0 13 13.87l.95-.94a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z'/&gt;&lt;/svg&gt;"/>
                                             <h:outputText value="#{m.utilisateur.telephone != null ? m.utilisateur.telephone : 'Non renseigné'}"/>
                                         </div>
                                         <div class="mcard-row">
-                                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                            <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24'&gt;&lt;rect x='3' y='4' width='18' height='18' rx='2'/&gt;&lt;line x1='16' y1='2' x2='16' y2='6'/&gt;&lt;line x1='8' y1='2' x2='8' y2='6'/&gt;&lt;line x1='3' y1='10' x2='21' y2='10'/&gt;&lt;/svg&gt;"/>
                                             Inscrit depuis :
-                                            <h:outputText value="#{m.utilisateur.dateInscription}">
-                                                <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                                            <!-- APRÈS -->
+                                            <h:outputText value="#{m.utilisateur.dateCreation}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" type="localDateTime"/>
                                             </h:outputText>
                                         </div>
                                     </div>
-
-                                    <!-- Pied : nb réservations dans les séances du coach -->
                                     <div class="mcard-foot">
                                         <span style="font-size:12px;color:#888">Réservations chez moi</span>
                                         <span class="badge bo">
@@ -666,13 +736,12 @@
 
                     <h:panelGroup rendered="#{empty coachDashboardBean.membres}" layout="block">
                         <div class="empty">
-                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                            <h:outputText escape="false" value="&lt;svg viewBox='0 0 24 24' style='width:40px;height:40px;fill:none;stroke:#555;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto 12px'&gt;&lt;path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/&gt;&lt;circle cx='9' cy='7' r='4'/&gt;&lt;/svg&gt;"/>
                             <div class="empty-ti">Aucun membre</div>
                             <div class="empty-sub">Les membres inscrits à vos séances apparaîtront ici.</div>
                         </div>
                     </h:panelGroup>
 
-                    <!-- Tableau récapitulatif des réservations -->
                     <h:panelGroup rendered="#{not empty coachDashboardBean.membres}" layout="block">
                         <div class="twrap">
                             <div class="thd">
@@ -697,9 +766,9 @@
                                         <td><h:outputText value="#{m.utilisateur.email}"/></td>
                                         <td><h:outputText value="#{m.utilisateur.telephone != null ? m.utilisateur.telephone : '—'}"/></td>
                                         <td>
-                                        <span class="badge bb">
-                                            <h:outputText value="#{coachDashboardBean.getNbSeancesMembre(m.id)}"/> réserv.
-                                        </span>
+                                            <span class="badge bb">
+                                                <h:outputText value="#{coachDashboardBean.getNbSeancesMembre(m.id)}"/> réserv.
+                                            </span>
                                         </td>
                                     </tr>
                                 </ui:repeat>
@@ -794,7 +863,7 @@
                 </div>
 
             </div>
-        </main>
+        </div>
     </div>
 
     <h:outputScript>
@@ -831,7 +900,7 @@
     }
     if(totEl) totEl.textContent=tot;
 })();
-]]>
+    ]]>
     </h:outputScript>
 </h:body>
 </html>

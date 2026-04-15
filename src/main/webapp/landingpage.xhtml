@@ -1,415 +1,575 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
-
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FITZONE - Votre Club de Sport</title>
-    <link rel="stylesheet" type="text/css" href="resources/css/landing.css" />
-</head>
+    <title>FITZONE — Gestion Club Sport</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&amp;family=Inter:wght@300;400;500;600&amp;family=Space+Mono&amp;display=swap" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html{scroll-behavior:smooth}
+        body{background:#080808;color:#e8e3dc;font-family:'Inter',sans-serif;font-weight:400;line-height:1.6;overflow-x:hidden}
+        a{text-decoration:none;color:inherit}
+        img{display:block;max-width:100%}
+        ul{list-style:none}
+        :root{
+            --gold:#c9a96e;
+            --gold-light:#e8d5b0;
+            --gold-dim:rgba(201,169,110,0.12);
+            --ink:#080808;
+            --ink2:#0d0d0d;
+            --ink3:#121212;
+            --smoke:#252525;
+            --mist:#3a3a3a;
+            --ash:#777;
+            --cream:#e8e3dc;
+            --ff-serif:'Playfair Display',Georgia,serif;
+            --ff-sans:'Inter',sans-serif;
+            --ff-mono:'Space Mono',monospace;
+        }
+        ::-webkit-scrollbar{width:3px}
+        ::-webkit-scrollbar-track{background:var(--ink)}
+        ::-webkit-scrollbar-thumb{background:var(--gold)}
 
+        /* NAV */
+        nav{
+            position:fixed;top:0;left:0;right:0;z-index:200;
+            display:flex;align-items:center;justify-content:space-between;
+            padding:0 64px;height:78px;
+            transition:background .4s,border-color .4s,backdrop-filter .4s;
+        }
+        nav.scrolled{
+            background:rgba(8,8,8,0.96);
+            border-bottom:1px solid rgba(201,169,110,0.1);
+            backdrop-filter:blur(20px);
+        }
+        .nav-logo img{
+            height:60px; /* plus grand */
+            width:auto;
+            filter:brightness(1.2);
+            transition:transform .3s;
+        }
+
+        .nav-logo img:hover{
+            transform:scale(1.05); /* petit effet premium */
+        }        .nav-links{display:flex;gap:44px}
+        .nav-links a{
+            font-size:11px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;
+            color:rgba(232,227,220,0.5);transition:color .25s;position:relative;
+        }
+        .nav-links a:hover{color:var(--cream)}
+        .nav-cta{
+            border:1px solid rgba(201,169,110,0.45);
+            color:var(--gold);padding:10px 30px;
+            font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+            transition:background .25s,color .25s;
+        }
+        .nav-cta:hover{background:var(--gold);color:var(--ink)}
+
+        /* HERO */
+        #hero{
+            position:relative;width:100%;height:100vh;min-height:680px;
+            display:flex;align-items:center;justify-content:center;
+            text-align:center;overflow:hidden;
+        }
+        .hero-bg{position:absolute;inset:0;background:var(--ink)}
+        .hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center;opacity:0.3;display:block}
+        .hero-overlay{
+            position:absolute;inset:0;
+            background:linear-gradient(to bottom,rgba(8,8,8,0.55) 0%,rgba(8,8,8,0.05) 40%,rgba(8,8,8,0.15) 65%,rgba(8,8,8,0.98) 100%);
+        }
+        .hero-c{position:relative;z-index:1;max-width:860px;padding:0 32px}
+        .eyebrow{
+            display:inline-flex;align-items:center;gap:14px;margin-bottom:36px;
+        }
+        .eyebrow-bar{width:44px;height:1px;background:var(--gold)}
+        .eyebrow span{font-family:var(--ff-mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}
+        h1{
+            font-family:var(--ff-serif);font-weight:900;
+            font-size:clamp(60px,9vw,116px);
+            line-height:0.9;letter-spacing:-3px;
+            color:#fff;margin-bottom:36px;
+        }
+        h1 em{font-style:italic;color:var(--gold);display:block}
+        .hero-p{
+            font-size:17px;font-weight:300;color:rgba(232,227,220,0.65);
+            max-width:520px;margin:0 auto 52px;line-height:1.85;
+        }
+        .btns{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}
+        .btn-g{
+            display:inline-flex;align-items:center;gap:10px;
+            background:var(--gold);color:var(--ink);
+            padding:16px 42px;font-size:11px;font-weight:700;
+            letter-spacing:2px;text-transform:uppercase;
+            transition:background .3s,transform .3s,box-shadow .3s;
+        }
+        .btn-g:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 16px 48px rgba(201,169,110,0.28)}
+        .btn-o{
+            display:inline-flex;align-items:center;gap:10px;
+            border:1px solid rgba(232,227,220,0.25);color:var(--cream);
+            padding:16px 42px;font-size:11px;font-weight:400;
+            letter-spacing:2px;text-transform:uppercase;
+            transition:border-color .3s,color .3s;
+        }
+        .btn-o:hover{border-color:var(--gold);color:var(--gold)}
+        .hero-scroll{
+            position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+            z-index:1;display:flex;flex-direction:column;align-items:center;gap:10px;
+            animation:bob 2.8s ease-in-out infinite;
+        }
+        .hero-scroll-line{width:1px;height:52px;background:linear-gradient(to bottom,var(--gold),transparent)}
+        .hero-scroll span{font-family:var(--ff-mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(232,227,220,0.35)}
+        @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}55%{transform:translateX(-50%) translateY(10px)}}
+
+        /* SECTION BASE */
+        section{padding:128px 64px}
+        .s-tag{
+            display:inline-flex;align-items:center;gap:12px;
+            font-family:var(--ff-mono);font-size:10px;
+            letter-spacing:3px;text-transform:uppercase;color:var(--gold);
+            margin-bottom:24px;
+        }
+        .s-tag::before{content:'';width:30px;height:1px;background:var(--gold)}
+        h2{
+            font-family:var(--ff-serif);font-weight:900;
+            font-size:clamp(42px,5.5vw,72px);
+            line-height:0.93;letter-spacing:-2px;
+            color:#fff;margin-bottom:20px;
+        }
+        h2 em{font-style:italic;color:var(--gold)}
+        .s-sub{font-size:15px;font-weight:300;color:var(--ash);line-height:1.85;max-width:500px}
+
+        /* FEATURES */
+        #features{background:var(--ink2)}
+        .feat-head{
+            display:grid;grid-template-columns:1fr 1fr;
+            gap:80px;align-items:end;margin-bottom:72px;
+        }
+        .feat-grid{
+            display:grid;grid-template-columns:repeat(3,1fr);
+            gap:1px;background:var(--smoke);border:1px solid var(--smoke);
+        }
+        .fc{
+            background:var(--ink2);padding:52px 36px;
+            position:relative;overflow:hidden;
+            transition:background .35s;
+        }
+        .fc::after{
+            content:'';position:absolute;top:0;left:0;right:0;height:2px;
+            background:linear-gradient(90deg,transparent,var(--gold),transparent);
+            transform:scaleX(0);transform-origin:left;
+            transition:transform .55s ease;
+        }
+        .fc:hover{background:var(--ink3)}
+        .fc:hover::after{transform:scaleX(1)}
+        .fc-n{font-family:var(--ff-mono);font-size:10px;letter-spacing:1.5px;color:var(--mist);margin-bottom:28px}
+        .fc-ico{
+            width:50px;height:50px;
+            border:1px solid rgba(201,169,110,0.2);
+            display:flex;align-items:center;justify-content:center;
+            font-size:22px;margin-bottom:22px;
+            transition:border-color .3s,background .3s;
+        }
+        .fc:hover .fc-ico{border-color:var(--gold);background:var(--gold-dim)}
+        .fc h3{font-family:var(--ff-serif);font-size:19px;font-weight:700;color:var(--cream);margin-bottom:12px}
+        .fc p{font-size:13px;color:var(--ash);line-height:1.75;font-weight:300}
+
+        /* TEAM */
+        #team{background:var(--ink);border-top:1px solid var(--smoke)}
+        .team-head{text-align:center;margin-bottom:72px}
+        .team-head .s-tag{justify-content:center}
+        .team-head .s-tag::before{display:none}
+        .team-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;max-width:900px;margin:0 auto}
+        .tc{
+            background:var(--ink2);border:1px solid var(--smoke);
+            transition:border-color .4s;overflow:hidden;
+        }
+        .tc:hover{border-color:rgba(201,169,110,0.35)}
+        .tc-photo{position:relative;height:420px;overflow:hidden}
+        .tc-photo img{
+            width:100%;height:100%;object-fit:cover;object-position:top center;
+            display:block;transition:transform .7s ease;
+            filter:grayscale(15%);
+        }
+        .tc:hover .tc-photo img{transform:scale(1.05);filter:grayscale(0%)}
+        .tc-photo-ov{
+            position:absolute;inset:0;
+            background:linear-gradient(to top,rgba(8,8,8,0.92) 0%,rgba(8,8,8,0.25) 45%,transparent 100%);
+        }
+        .tc-badge{
+            position:absolute;top:18px;right:18px;
+            background:rgba(8,8,8,0.75);border:1px solid rgba(201,169,110,0.3);
+            backdrop-filter:blur(10px);
+            padding:6px 14px;font-family:var(--ff-mono);font-size:9px;
+            letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+        }
+        .tc-body{padding:36px}
+        .tc-role{font-family:var(--ff-mono);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+        .tc-name{font-family:var(--ff-serif);font-size:34px;font-weight:700;color:#fff;letter-spacing:-0.5px;margin-bottom:14px}
+        .tc-bio{font-size:13px;font-weight:300;color:var(--ash);line-height:1.8;margin-bottom:22px}
+        .tc-tags{display:flex;gap:8px;flex-wrap:wrap}
+        .tc-tag{
+            border:1px solid var(--smoke);padding:5px 14px;
+            font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;
+            color:rgba(232,227,220,0.4);transition:all .25s;
+        }
+        .tc:hover .tc-tag{border-color:rgba(201,169,110,0.18);color:rgba(201,169,110,0.65)}
+
+        /* CTA */
+        #cta{
+            background:var(--ink2);border-top:1px solid var(--smoke);
+            text-align:center;position:relative;overflow:hidden;padding:140px 64px;
+        }
+        .cta-wm{
+            position:absolute;font-family:var(--ff-serif);font-weight:900;
+            font-size:260px;line-height:1;color:rgba(255,255,255,0.02);
+            top:50%;left:50%;transform:translate(-50%,-50%);
+            white-space:nowrap;pointer-events:none;letter-spacing:-8px;
+        }
+        .cta-glow2{
+            position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+            width:480px;height:280px;
+            background:radial-gradient(ellipse,rgba(201,169,110,0.06) 0%,transparent 70%);
+            pointer-events:none;
+        }
+        .cta-inner{position:relative;z-index:1}
+        #cta h2{font-size:clamp(50px,7vw,90px);margin-bottom:24px}
+        #cta .cta-p{font-size:16px;font-weight:300;color:var(--ash);max-width:440px;margin:0 auto 52px;line-height:1.85}
+        #cta{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+        }
+        .cta-note{margin-top:28px;font-family:var(--ff-mono);font-size:10px;letter-spacing:1px;color:var(--mist)}
+
+        /* FOOTER */
+        footer{
+            background:var(--ink);
+            border-top:1px solid var(--smoke);
+            padding:60px 64px;
+        }
+
+        .footer-container{
+            display:grid;
+            grid-template-columns:1.5fr 1fr 1fr;
+            gap:40px;
+            align-items:start;
+        }
+
+        /* Logo + description */
+        .footer-brand p{
+            margin-top:16px;
+            font-size:13px;
+            color:var(--ash);
+            max-width:260px;
+            line-height:1.7;
+        }
+
+        /* titres */
+        .footer-title{
+            font-family:var(--ff-mono);
+            font-size:10px;
+            letter-spacing:2px;
+            text-transform:uppercase;
+            color:var(--gold);
+            margin-bottom:18px;
+        }
+
+        /* liens */
+        .footer-links a{
+            display:block;
+            font-size:12px;
+            color:var(--mist);
+            margin-bottom:10px;
+            transition:color .25s, transform .25s;
+        }
+
+        .footer-links a:hover{
+            color:var(--gold);
+            transform:translateX(4px);
+        }
+
+        /* bottom */
+        .footer-bottom{
+            margin-top:40px;
+            padding-top:20px;
+            border-top:1px solid var(--smoke);
+            display:flex;
+            justify-content:space-between;
+            flex-wrap:wrap;
+            gap:10px;
+        }
+
+        .footer-bottom p{
+            font-size:11px;
+            color:var(--mist);
+        }
+        /* REVEAL */
+        .reveal{opacity:0;transform:translateY(32px);transition:opacity .75s ease,transform .75s ease}
+        .reveal.in{opacity:1;transform:translateY(0)}
+
+        /* RESPONSIVE */
+        @media(max-width:960px){
+            nav{padding:0 24px}
+            .nav-links{display:none}
+            section{padding:80px 24px}
+            #cta{padding:100px 24px}
+            .feat-head{grid-template-columns:1fr;gap:36px}
+            .feat-grid{grid-template-columns:1fr 1fr}
+            .team-grid{grid-template-columns:1fr;max-width:480px}
+            footer{flex-direction:column;text-align:center}
+        }
+        @media(max-width:600px){
+            .feat-grid{grid-template-columns:1fr}
+            h1{font-size:54px;letter-spacing:-2px}
+        }
+    </style>
+</head>
 <body>
 
-<!-- ================================================ NAVBAR -->
-<div id="navbar">
-    <div class="logo">
-        <img src="resources/images/logo.png" alt="FITZONE" class="logo-img" />
-        <span class="logo-text">FIT<span>ZONE</span></span>
+<!-- NAV -->
+<nav id="nav">
+    <div class="nav-logo">
+        <img src="resources/images/logo.png" alt="FITZONE" />
     </div>
     <ul class="nav-links">
-        <li><a href="#features">Fonctionnalites</a></li>
-        <li><a href="#stats">Chiffres</a></li>
-        <li><a href="#why">Pourquoi nous</a></li>
+        <li><a href="#features">Fonctionnalités</a></li>
+        <li><a href="#team">Notre équipe</a></li>
         <li><a href="#cta">Contact</a></li>
     </ul>
     <a href="login.xhtml" class="nav-cta">Se connecter</a>
-</div>
+</nav>
 
-<!-- ================================================ HERO -->
+<!-- HERO -->
 <div id="hero">
-    <div class="hero-bg-text">FITZONE</div>
-
-    <div class="hero-content">
-
-        <!-- GAUCHE -->
-        <div class="hero-left">
-
-            <div class="hero-eyebrow">
-                <div class="hero-eyebrow-dot"></div>
-                <span>Application de Gestion Fitness</span>
-            </div>
-
-            <h1>
-                Gerez votre club<br />
-                <span class="accent">sport</span> facilement.
-            </h1>
-
-            <p>
-                FITZONE est la plateforme tout-en-un pour gerer vos membres,
-                seances, abonnements et coachs.
-                <strong>Simple, rapide et securise.</strong>
-            </p>
-
-            <div class="hero-btns">
-                <a href="register.xhtml" class="btn-primary">
-                    Commencer gratuitement
-                    <span class="btn-arrow">&#8594;</span>
-                </a>
-                <a href="login.xhtml" class="btn-outline">Se connecter</a>
-            </div>
-
-            <div class="hero-trust">
-                <div class="hero-trust-avatars">
-                    <div class="trust-avatar" style="background:#e05a00;">K</div>
-                    <div class="trust-avatar" style="background:#c94e00;">S</div>
-                    <div class="trust-avatar" style="background:#a33f00;">Y</div>
-                    <div class="trust-avatar" style="background:#7a2f00;">M</div>
-                </div>
-                <div class="hero-trust-text">
-                    <div class="trust-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                    <div class="trust-label">+500 clubs nous font confiance</div>
-                </div>
-            </div>
-
-            <div class="hero-mini-stats">
-                <div class="mini-stat">
-                    <div class="mini-stat-num">98%</div>
-                    <div class="mini-stat-lbl">Satisfaction</div>
-                </div>
-                <div class="mini-stat-sep"></div>
-                <div class="mini-stat">
-                    <div class="mini-stat-num">2min</div>
-                    <div class="mini-stat-lbl">Pour demarrer</div>
-                </div>
-                <div class="mini-stat-sep"></div>
-                <div class="mini-stat">
-                    <div class="mini-stat-num">24/7</div>
-                    <div class="mini-stat-lbl">Support</div>
-                </div>
-            </div>
-
+    <div class="hero-bg">
+        <img src="resources/images/landing.png" alt="FITZONE app dashboard" />
+        <div class="hero-overlay">&#160;</div>
+    </div>
+    <div class="hero-c">
+        <div class="eyebrow">
+            <div class="eyebrow-bar">&#160;</div>
+            <span>Plateforme Gestion Fitness — 2026</span>
+            <div class="eyebrow-bar">&#160;</div>
         </div>
-
-        <!-- DROITE -->
-        <div class="hero-right">
-
-            <div class="hero-img-frame">
-                <div class="hero-img-corner hero-img-corner-tl"></div>
-                <div class="hero-img-corner hero-img-corner-tr"></div>
-                <div class="hero-img-corner hero-img-corner-bl"></div>
-                <div class="hero-img-corner hero-img-corner-br"></div>
-
-                <img src="resources/images/landing.png" alt="FITZONE App" class="hero-img" />
-
-                <div class="hero-float-badge-top">
-                    <div class="float-icon">&#128200;</div>
-                    <div>
-                        <div class="float-val">+12%</div>
-                        <div class="float-lbl">Ce mois-ci</div>
-                    </div>
-                </div>
-
-                <div class="hero-float-badge-bot">
-                    <div class="float-icon">&#127947;</div>
-                    <div>
-                        <div class="float-val">500+</div>
-                        <div class="float-lbl">Membres actifs</div>
-                    </div>
-                </div>
-            </div>
-
+        <h1>
+            Gérez votre
+            <em>club sport.</em>
+        </h1>
+        <p class="hero-p">
+            La plateforme tout-en-un pour gérer membres, séances,
+            abonnements et coachs. Professionnelle, rapide, sécurisée.
+        </p>
+        <div class="btns">
+            <a href="register.xhtml" class="btn-g">
+                Commencer gratuitement
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.5 6.5h10M7 2l4.5 4.5L7 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <a href="login.xhtml" class="btn-o">Se connecter</a>
         </div>
-
     </div>
-
-    <div class="hero-line"></div>
-</div>
-
-<!-- ================================================ STATS BAND -->
-<div id="stats">
-    <div class="stat-item">
-        <div class="stat-num">500+</div>
-        <div class="stat-label">Membres inscrits</div>
-    </div>
-    <div class="stat-sep"></div>
-    <div class="stat-item">
-        <div class="stat-num">50+</div>
-        <div class="stat-label">Seances par semaine</div>
-    </div>
-    <div class="stat-sep"></div>
-    <div class="stat-item">
-        <div class="stat-num">2</div>
-        <div class="stat-label">Roles (Coach / Membre)</div>
-    </div>
-    <div class="stat-sep"></div>
-    <div class="stat-item">
-        <div class="stat-num">100%</div>
-        <div class="stat-label">Securise et fiable</div>
+    <div class="hero-scroll">
+        <div class="hero-scroll-line">&#160;</div>
+        <span>Scroll</span>
     </div>
 </div>
 
-<!-- ================================================ FEATURES -->
-<div id="features">
-
-    <div class="features-header">
-        <div class="features-header-left">
-            <div class="section-label">Ce que FITZONE vous offre</div>
-            <h2 class="section-title">Tout ce dont votre<br />club a besoin</h2>
+<!-- FEATURES -->
+<section id="features">
+    <div class="feat-head">
+        <div class="reveal">
+            <div class="s-tag">Ce que nous offrons</div>
+            <h2>Tout ce dont<br/>votre <em>club</em><br/>a besoin.</h2>
         </div>
-        <div class="features-header-right">
-            <p class="section-sub">Une seule plateforme pour gerer l'integralite
-                de votre salle de sport. Simple, puissant, efficace.</p>
-            <a href="register.xhtml" class="btn-primary">Commencer maintenant</a>
-        </div>
-    </div>
-
-    <div class="features-list">
-        <div class="feature-row">
-            <div class="feature-row-num">01</div>
-            <div class="feature-row-icon">&#127939;</div>
-            <div class="feature-row-body">
-                <h3>Gestion des Membres</h3>
-                <p>Inscrivez, suivez et gerez tous vos adherents en un clic.
-                    Historique complet, profil detaille et suivi personnalise.</p>
-            </div>
-            <div class="feature-row-tag">Membres</div>
-        </div>
-        <div class="feature-row">
-            <div class="feature-row-num">02</div>
-            <div class="feature-row-icon">&#128197;</div>
-            <div class="feature-row-body">
-                <h3>Planning des Seances</h3>
-                <p>Creez et organisez vos seances de fitness, yoga, musculation.
-                    Les membres reservent directement depuis leur espace.</p>
-            </div>
-            <div class="feature-row-tag">Planning</div>
-        </div>
-        <div class="feature-row">
-            <div class="feature-row-num">03</div>
-            <div class="feature-row-icon">&#128176;</div>
-            <div class="feature-row-body">
-                <h3>Abonnements et Paiements</h3>
-                <p>Gerez les abonnements mensuels, annuels et les renouvellements
-                    automatiques. Suivi des paiements en temps reel.</p>
-            </div>
-            <div class="feature-row-tag">Finance</div>
-        </div>
-        <div class="feature-row">
-            <div class="feature-row-num">04</div>
-            <div class="feature-row-icon">&#127947;</div>
-            <div class="feature-row-body">
-                <h3>Espace Coach</h3>
-                <p>Les coachs gerent leurs propres seances, voient leurs
-                    inscrits et suivent la progression de chaque membre.</p>
-            </div>
-            <div class="feature-row-tag">Coaching</div>
-        </div>
-        <div class="feature-row">
-            <div class="feature-row-num">05</div>
-            <div class="feature-row-icon">&#128200;</div>
-            <div class="feature-row-body">
-                <h3>Tableau de Bord</h3>
-                <p>Statistiques en temps reel : taux de presence, revenus,
-                    seances populaires et evolution des abonnements.</p>
-            </div>
-            <div class="feature-row-tag">Analytics</div>
-        </div>
-        <div class="feature-row">
-            <div class="feature-row-num">06</div>
-            <div class="feature-row-icon">&#128274;</div>
-            <div class="feature-row-body">
-                <h3>Securite et Acces</h3>
-                <p>Authentification securisee avec roles distincts.
-                    Chaque utilisateur accede uniquement a son espace.</p>
-            </div>
-            <div class="feature-row-tag">Securite</div>
+        <div class="reveal">
+            <p class="s-sub">Une seule plateforme pour gérer l'intégralité de votre salle de sport. Conçue pour les administrateurs, les coachs et les membres.</p>
+            <a href="register.xhtml" class="btn-g" style="display:inline-flex;margin-top:36px">
+                Essayer maintenant
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.5 6.5h10M7 2l4.5 4.5L7 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
         </div>
     </div>
-</div>
-
-<!-- ================================================ POURQUOI NOUS -->
-<div id="why">
-    <div class="why-visual">
-        <span class="why-tag-tl">Notre mission</span>
-        <img src="resources/images/landing2.png" alt="FITZONE" class="why-visual-img" />
-        <span class="why-tag-br">FITZONE 2025</span>
+    <div class="feat-grid">
+        <div class="fc reveal">
+            <div class="fc-n">01</div>
+            <div class="fc-ico">&#127939;</div>
+            <h3>Gestion des Membres</h3>
+            <p>Inscrivez, suivez et gérez tous vos adhérents. Historique complet, profil détaillé et suivi personnalisé.</p>
+        </div>
+        <div class="fc reveal">
+            <div class="fc-n">02</div>
+            <div class="fc-ico">&#128197;</div>
+            <h3>Planning des Séances</h3>
+            <p>Créez et organisez vos séances. Les membres réservent directement depuis leur espace personnel.</p>
+        </div>
+        <div class="fc reveal">
+            <div class="fc-n">03</div>
+            <div class="fc-ico">&#128176;</div>
+            <h3>Abonnements</h3>
+            <p>Gérez les formules mensuelles et annuelles. Renouvellements et paiements suivis en temps réel.</p>
+        </div>
+        <div class="fc reveal">
+            <div class="fc-n">04</div>
+            <div class="fc-ico">&#127947;</div>
+            <h3>Espace Coach</h3>
+            <p>Les coachs gèrent leurs séances, consultent leurs inscrits et suivent la progression de chaque membre.</p>
+        </div>
+        <div class="fc reveal">
+            <div class="fc-n">05</div>
+            <div class="fc-ico">&#128200;</div>
+            <h3>Tableau de Bord</h3>
+            <p>Statistiques en temps réel : présences, revenus, séances populaires et évolution des abonnements.</p>
+        </div>
+        <div class="fc reveal">
+            <div class="fc-n">06</div>
+            <div class="fc-ico">&#128274;</div>
+            <h3>Sécurité et Accès</h3>
+            <p>Authentification sécurisée avec rôles distincts. Chaque utilisateur accède uniquement à son espace.</p>
+        </div>
     </div>
-    <div class="why-content">
-        <div class="section-label">Pourquoi choisir FITZONE</div>
-        <h2 class="section-title">Simple.<br />Efficace.<br />Puissant.</h2>
-        <div class="why-points">
-            <div class="why-point">
-                <div class="why-dot"></div>
-                <div>
-                    <h4>Interface intuitive</h4>
-                    <p>Prise en main en moins de 5 minutes.
-                        Aucune formation necessaire pour vos equipes.</p>
+</section>
+
+<!-- TEAM -->
+<section id="team">
+    <div class="team-head reveal">
+        <div class="s-tag">L'équipe fondatrice</div>
+        <h2>Les visages<br/>derrière <em>FITZONE.</em></h2>
+        <p class="s-sub" style="margin:0 auto;text-align:center">Deux passionnées de sport et de technologie qui ont imaginé et construit FITZONE de A à Z.</p>
+    </div>
+    <div class="team-grid">
+        <div class="tc reveal">
+            <div class="tc-photo">
+                <img src="resources/images/rahma.png" alt="Rahma — Co-fondatrice" />
+                <div class="tc-photo-ov">&#160;</div>
+                <div class="tc-badge">Co-fondatrice</div>
+            </div>
+            <div class="tc-body">
+                <div class="tc-role">Développeuse Backend</div>
+                <div class="tc-name">Rahma</div>
+                <p class="tc-bio">Experte en développement web et architecture logicielle. Elle a conçu le cœur technique de FITZONE pour garantir performance, scalabilité et fiabilité.</p>
+                <div class="tc-tags">
+                    <span class="tc-tag">Java EE</span>
+                    <span class="tc-tag">Jakarta Faces</span>
+                    <span class="tc-tag">SQL</span>
+                    <span class="tc-tag">Architecture</span>
                 </div>
             </div>
-            <div class="why-point">
-                <div class="why-dot"></div>
-                <div>
-                    <h4>Disponible partout</h4>
-                    <p>Accessible depuis n'importe quel appareil :
-                        ordinateur, tablette ou smartphone.</p>
-                </div>
+        </div>
+        <div class="tc reveal">
+            <div class="tc-photo">
+                <img src="resources/images/soukaina.png" alt="Soukaina — Co-fondatrice" />
+                <div class="tc-photo-ov">&#160;</div>
+                <div class="tc-badge">Co-fondatrice</div>
             </div>
-            <div class="why-point">
-                <div class="why-dot"></div>
-                <div>
-                    <h4>Donnees protegees</h4>
-                    <p>Vos donnees membres et financieres sont
-                        chiffrees et sauvegardees en securite.</p>
-                </div>
-            </div>
-            <div class="why-point">
-                <div class="why-dot"></div>
-                <div>
-                    <h4>Support reactif</h4>
-                    <p>Une equipe disponible pour repondre a
-                        toutes vos questions et vous accompagner.</p>
+            <div class="tc-body">
+                <div class="tc-role">Design et UX</div>
+                <div class="tc-name">Soukaina</div>
+                <p class="tc-bio">Spécialiste UX/UI et cheffe de projet. Elle a façonné l'expérience utilisateur de FITZONE pour qu'elle soit intuitive et agréable pour chaque rôle.</p>
+                <div class="tc-tags">
+                    <span class="tc-tag">UI Design</span>
+                    <span class="tc-tag">Frontend</span>
+                    <span class="tc-tag">UX Research</span>
+                    <span class="tc-tag">Figma</span>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- ================================================ COMMENT CA MARCHE -->
-<div id="howit">
-    <div class="section-label">Processus simple</div>
-    <h2 class="section-title">Comment ca marche ?</h2>
-    <p class="section-sub">Demarrez en 3 etapes. Aucune configuration complexe requise.</p>
-    <div class="steps-grid">
-        <div class="step">
-            <div class="step-circle">01</div>
-            <div class="step-body">
-                <h3>Creez votre compte</h3>
-                <p>Inscrivez-vous en moins de 2 minutes. Choisissez votre role : administrateur, coach ou membre.</p>
-            </div>
+<!-- CTA -->
+<section id="cta">
+    <div class="cta-wm">FITZONE</div>
+    <div class="cta-glow2">&#160;</div>
+    <div class="cta-inner reveal">
+        <div class="s-tag" style="justify-content:center">Rejoignez-nous</div>
+        <h2>Prêt à transformer<br/><em>votre club ?</em></h2>
+        <p class="cta-p">Rejoignez FITZONE et gérez votre salle de sport avec l'outil qu'elle mérite vraiment.</p>
+        <div class="cta-btns">
+            <a href="register.xhtml" class="btn-g">
+                Créer mon compte
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.5 6.5h10M7 2l4.5 4.5L7 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <a href="login.xhtml" class="btn-o">Déjà membre ? Se connecter</a>
         </div>
-        <div class="step">
-            <div class="step-circle">02</div>
-            <div class="step-body">
-                <h3>Configurez votre club</h3>
-                <p>Ajoutez vos seances, vos coachs et definissez vos formules d'abonnement en quelques clics.</p>
-            </div>
-        </div>
-        <div class="step">
-            <div class="step-circle">03</div>
-            <div class="step-body">
-                <h3>Gerez et suivez</h3>
-                <p>Suivez les presences, gerez les paiements et analysez les performances de votre club en temps reel.</p>
-            </div>
-        </div>
+        <p class="cta-note">Gratuit — Aucune carte de crédit requise.</p>
     </div>
-</div>
+</section>
 
-<!-- ================================================ TEMOIGNAGES -->
-<div id="testimonials">
-    <div class="section-label">Ils nous font confiance</div>
-    <h2 class="section-title">Ce que disent nos utilisateurs</h2>
-    <div class="testi-grid">
-        <div class="testi-card">
-            <div class="testi-quote">&#8220;</div>
-            <p>FITZONE a completement transforme la gestion de notre salle. Les reservations en ligne ont reduit nos no-shows de 40%. Indispensable !</p>
-            <div class="testi-author">
-                <div class="testi-avatar">KM</div>
-                <div>
-                    <div class="testi-name">Karim M.</div>
-                    <div class="testi-role">Directeur - FitClub Casablanca</div>
-                </div>
+<!-- FOOTER -->
+<footer>
+    <div class="footer-container">
+
+        <!-- LOGO + DESC -->
+        <div class="footer-brand">
+            <img src="resources/images/logo.png" alt="FITZONE" />
+            <p>Plateforme moderne pour gérer votre salle de sport facilement et efficacement.</p>
+        </div>
+
+        <!-- LIENS -->
+        <div>
+            <div class="footer-title">Navigation</div>
+            <div class="footer-links">
+                <a href="#features">Fonctionnalités</a>
+                <a href="#team">Équipe</a>
+                <a href="#cta">Contact</a>
             </div>
         </div>
-        <div class="testi-card testi-featured">
-            <div class="testi-quote">&#8220;</div>
-            <p>En tant que coach, j'adore pouvoir suivre mes membres individuellement. Le tableau de bord est clair et les stats me motivent autant que mes clients !</p>
-            <div class="testi-author">
-                <div class="testi-avatar">SB</div>
-                <div>
-                    <div class="testi-name">Sara B.</div>
-                    <div class="testi-role">Coach Fitness - PowerGym</div>
-                </div>
+
+        <!-- COMPTE -->
+        <div>
+            <div class="footer-title">Compte</div>
+            <div class="footer-links">
+                <a href="login.xhtml">Connexion</a>
+                <a href="register.xhtml">Créer un compte</a>
             </div>
         </div>
-        <div class="testi-card">
-            <div class="testi-quote">&#8220;</div>
-            <p>La gestion des abonnements est un gain de temps enorme. Avant on faisait tout sur papier. Maintenant tout est automatique et sans erreur.</p>
-            <div class="testi-author">
-                <div class="testi-avatar">YA</div>
-                <div>
-                    <div class="testi-name">Youssef A.</div>
-                    <div class="testi-role">Gerant - Titan Gym Rabat</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- ================================================ ROLES -->
-<div id="roles">
-    <div class="roles-inner">
-        <div class="section-label">Pour tout le monde</div>
-        <h2 class="section-title">Un espace dedie a chaque role</h2>
-        <div class="roles-grid">
-            <div class="role-card role-admin">
-                <div class="role-icon">&#128101;</div>
-                <div class="role-tag">Administrateur</div>
-                <h3>Vue complete</h3>
-                <ul class="role-list">
-                    <li>Gestion totale des membres</li>
-                    <li>Suivi des abonnements</li>
-                    <li>Statistiques et rapports</li>
-                    <li>Gestion des coachs</li>
-                    <li>Configuration du club</li>
-                </ul>
-            </div>
-            <div class="role-card role-coach">
-                <div class="role-icon">&#127947;</div>
-                <div class="role-tag">Coach</div>
-                <h3>Espace coaching</h3>
-                <ul class="role-list">
-                    <li>Gestion de mes seances</li>
-                    <li>Liste de mes inscrits</li>
-                    <li>Suivi de progression</li>
-                    <li>Planning personnel</li>
-                    <li>Communication membres</li>
-                </ul>
-            </div>
-            <div class="role-card role-membre">
-                <div class="role-icon">&#128170;</div>
-                <div class="role-tag">Membre</div>
-                <h3>Espace membre</h3>
-                <ul class="role-list">
-                    <li>Reservation de seances</li>
-                    <li>Suivi de mon abonnement</li>
-                    <li>Historique de presence</li>
-                    <li>Profil personnalise</li>
-                    <li>Acces au planning</li>
-                </ul>
-            </div>
-        </div>
     </div>
-</div>
 
-<!-- ================================================ CTA -->
-<div id="cta">
-    <h2>Pret a transformer votre club ?</h2>
-    <p>Rejoignez FITZONE et gerez votre salle de sport comme un pro.</p>
-    <div class="cta-btns">
-        <a href="register.xhtml" class="btn-dark">Creer mon compte</a>
-        <a href="login.xhtml" class="btn-cta-outline">Deja membre ? Se connecter</a>
+    <!-- BAS -->
+    <div class="footer-bottom">
+        <p>© 2026 FITZONE</p>
+        <p>Design by soukainaANDrahma ✨</p>
     </div>
-</div>
+</footer>
 
-<!-- ================================================ FOOTER -->
-<div id="footer">
-    <div class="logo">
-        <span class="logo-text">FIT<span>ZONE</span></span>
-    </div>
-    <p>2025 FITZONE - Votre club, votre <span>performance</span>.</p>
-</div>
+<script type="text/javascript">
+    //<![CDATA[
+    (function(){
+        var nav = document.getElementById('nav');
+        function onScroll(){
+            nav.className = window.scrollY > 60 ? 'scrolled' : '';
+        }
+        window.addEventListener('scroll', onScroll);
 
+        var els = document.querySelectorAll('.reveal');
+        if(window.IntersectionObserver){
+            var io = new IntersectionObserver(function(entries){
+                var i;
+                for(i=0;i<entries.length;i++){
+                    if(entries[i].isIntersecting){
+                        entries[i].target.className += ' in';
+                    }
+                }
+            },{threshold:0.1});
+            var i;
+            for(i=0;i<els.length;i++){ io.observe(els[i]); }
+        } else {
+            var i;
+            for(i=0;i<els.length;i++){ els[i].className += ' in'; }
+        }
+    })();
+    //]]>
+</script>
 </body>
 </html>

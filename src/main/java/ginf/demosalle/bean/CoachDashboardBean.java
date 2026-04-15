@@ -19,6 +19,10 @@ import jakarta.inject.Named;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -40,6 +44,11 @@ public class CoachDashboardBean implements Serializable {
 
     @Inject
     private UtilisateurDAO utilisateurDAO;
+
+    @Inject
+    private AuthBean authBean;
+
+    private boolean chargementEffectue = false;
 
     private Coach coach;
     private List<Seance> toutesSeances = new ArrayList<>();
@@ -63,7 +72,6 @@ public class CoachDashboardBean implements Serializable {
     @PostConstruct
     public void init() {
         chargerSalles();
-        charger();
     }
 
     private void chargerSalles() {
@@ -109,6 +117,8 @@ public class CoachDashboardBean implements Serializable {
             specialite = "";
             description = "";
         }
+
+        chargementEffectue = true; // ← AJOUTER
     }
 
     private void chargerCoach(Integer idCoach) {
@@ -143,10 +153,10 @@ public class CoachDashboardBean implements Serializable {
     }
 
     private void resetData() {
+        chargementEffectue = false;
         coach = null;
         toutesSeances = new ArrayList<>();
         membres = new ArrayList<>();
-        salles = new ArrayList<>();
         seanceForm = new Seance();
         modeEditionSeance = false;
         dateHeureStr = "";
@@ -169,7 +179,7 @@ public class CoachDashboardBean implements Serializable {
                                     "JOIN r.membre m " +
                                     "JOIN FETCH m.utilisateur u " +
                                     "WHERE r.seance.coach.id = :id " +
-                                    "ORDER BY u.nom, u.prenom",
+                                    "ORDER BY u.nom, u.prenom",    //Donne-moi tous les membres qui ont fait au moins une réservation sur une séance de CE coach"
                             Membre.class
                     )
                     .setParameter("id", idCoach)
@@ -227,10 +237,15 @@ public class CoachDashboardBean implements Serializable {
     }
 
     public int getTotalSeances() {
+        if (!chargementEffectue && utilisateurConnecte() != null) {
+            charger();
+        }
         return (toutesSeances != null) ? toutesSeances.size() : 0;
     }
-
     public int getTotalMembres() {
+        if (!chargementEffectue && utilisateurConnecte() != null) {
+            charger();
+        }
         return (membres != null) ? membres.size() : 0;
     }
 
@@ -309,6 +324,8 @@ public class CoachDashboardBean implements Serializable {
 
         return new ArrayList<>(copie);
     }
+
+
 
     public long getNbSeancesMembre(Integer idMembre) {
         Utilisateur u = utilisateurConnecte();
@@ -563,16 +580,23 @@ public class CoachDashboardBean implements Serializable {
     }
 
     private Utilisateur utilisateurConnecte() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        if (context == null) {
-            return null;
+        // Priorité 1 : via AuthBean injecté (même session CDI)
+        if (authBean != null && authBean.getUtilisateurConnecte() != null) {
+            return authBean.getUtilisateurConnecte();
         }
 
-        Object obj = context.getExternalContext()
-                .getSessionMap()
-                .get("utilisateurConnecte");
+        // Priorité 2 : fallback session map (sécurité)
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context != null) {
+            Object obj = context.getExternalContext()
+                    .getSessionMap()
+                    .get("utilisateurConnecte");
+            if (obj instanceof Utilisateur) {
+                return (Utilisateur) obj;
+            }
+        }
 
-        return (obj instanceof Utilisateur) ? (Utilisateur) obj : null;
+        return null;
     }
 
     private String safe(String value) {
@@ -580,14 +604,23 @@ public class CoachDashboardBean implements Serializable {
     }
 
     public Coach getCoach() {
+        if (!chargementEffectue && utilisateurConnecte() != null) {
+            charger();
+        }
         return coach;
     }
 
     public List<Seance> getToutesSeances() {
+        if (!chargementEffectue && utilisateurConnecte() != null) {
+            charger();
+        }
         return toutesSeances;
     }
 
     public List<Membre> getMembres() {
+        if (!chargementEffectue && utilisateurConnecte() != null) {
+            charger();
+        }
         return membres;
     }
 
@@ -693,5 +726,65 @@ public class CoachDashboardBean implements Serializable {
 
     public void setConfirmMdp(String confirmMdp) {
         this.confirmMdp = confirmMdp;
+    }
+
+    public List<int[]> getSeancesParSemaineAvecStatut() {
+        int[] planifiees = {0, 0, 0, 0};
+        int[] terminees  = {0, 0, 0, 0};
+        if (toutesSeances == null) return List.of(new int[]{0,0}, new int[]{0,0}, new int[]{0,0}, new int[]{0,0});
+
+        YearMonth moisCourant = YearMonth.now();
+
+        for (Seance s : toutesSeances) {
+            if (s == null || s.getDateHeure() == null) continue;
+            if (!YearMonth.from(s.getDateHeure()).equals(moisCourant)) continue;
+
+            int jour = s.getDateHeure().getDayOfMonth();
+            int semaine = (jour - 1) / 7;
+            if (semaine >= 4) semaine = 3;
+
+            if (s.getStatut() == Seance.Statut.terminee) terminees[semaine]++;
+            else planifiees[semaine]++;
+        }
+
+        return List.of(
+                new int[]{planifiees[0], terminees[0]},
+                new int[]{planifiees[1], terminees[1]},
+                new int[]{planifiees[2], terminees[2]},
+                new int[]{planifiees[3], terminees[3]}
+        );
+    }
+
+
+
+    public long getSeancesTerminees() {
+        if (toutesSeances == null) return 0;
+        return toutesSeances.stream()
+                .filter(s -> s != null && s.getStatut() == Seance.Statut.terminee)
+                .count();
+    }
+
+    public int getMaxSemaine() {
+        return getSeancesParSemaineAvecStatut().stream()
+                .mapToInt(arr -> arr[0] + arr[1])
+                .max().orElse(1);
+    }
+
+    public List<String> getDatesSemaines() {
+        YearMonth moisCourant = YearMonth.now();
+        List<String> dates = new ArrayList<>();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM");
+
+        for (int i = 0; i < 4; i++) {
+            int debutJour = i * 7 + 1;
+            int finJour = Math.min(debutJour + 6, moisCourant.lengthOfMonth());
+
+            LocalDate debut = moisCourant.atDay(debutJour);
+            LocalDate fin = moisCourant.atDay(finJour);
+
+            dates.add(debut.format(fmt) + " – " + fin.format(fmt));
+        }
+
+        return dates;
     }
 }
