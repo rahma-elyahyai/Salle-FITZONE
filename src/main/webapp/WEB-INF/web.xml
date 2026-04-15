@@ -28,7 +28,7 @@
 
     <!-- Page d'accueil -->
     <welcome-file-list>
-        <welcome-file>login.xhtml</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
     <!-- Pages d'erreur -->

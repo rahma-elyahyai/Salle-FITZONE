@@ -1,0 +1,394 @@
+<!-- ══════════════════════════════════
+     SECTION : ACCUEIL / TABLEAU DE BORD
+══════════════════════════════════ -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+<div class="fz-section active" id="section-accueil">
+<style>
+/* ── MOTIVATION BANNER ── */
+.fz-motivation {
+    background: linear-gradient(90deg, rgba(249,115,22,.1) 0%, rgba(249,115,22,.04) 100%);
+    border: 1px solid rgba(249,115,22,.2);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 12px 18px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--accent2);
+    margin-bottom: 22px;
+    min-height: 42px;
+}
+
+/* ── WELCOME ── */
+.fz-welcome-banner {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-bottom: 22px;
+    overflow: hidden;
+}
+.fz-welcome-banner::after {
+    content: 'FITZONE';
+    position: absolute; right: -10px; top: -14px;
+    font-family: var(--font-disp);
+    font-size: 100px; letter-spacing: 4px;
+    color: rgba(255,255,255,.025);
+    pointer-events: none; line-height: 1;
+}
+.fz-welcome-greeting { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+.fz-welcome-name {
+    font-family: var(--font-disp);
+    font-size: 40px; letter-spacing: 3px;
+    color: var(--muted2); line-height: 1.1;
+    margin-bottom: 6px;
+}
+.fz-welcome-name span { color: var(--accent); }
+.fz-welcome-sub { font-size: 13px; color: var(--muted); }
+
+/* ── STAT CARDS ── */
+.fz-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 22px;
+}
+.fz-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s, transform .2s;
+}
+.fz-card:hover { border-color: rgba(249,115,22,.3); transform: translateY(-2px); }
+.fz-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+}
+.fz-card-icon {
+    width: 36px; height: 36px;
+    background: rgba(249,115,22,.1);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+}
+.fz-card-icon svg { width: 18px; height: 18px; fill: none; stroke: var(--accent); stroke-width: 1.8; }
+.fz-card-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.fz-card-value { font-family: var(--font-disp); font-size: 34px; letter-spacing: 1px; color: var(--text); line-height: 1; }
+.fz-card-value.orange { color: var(--accent); }
+.fz-card-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+/* ── HOME ROW ── */
+.fz-home-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+.fz-home-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+/* ── NEXT SEANCE ── */
+.fz-next-seance-wrap { display: flex; flex-direction: column; }
+.fz-block-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.fz-next-seance {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px;
+    display: flex; gap: 18px; align-items: flex-start;
+    flex: 1;
+    transition: border-color .2s;
+}
+.fz-next-seance:hover { border-color: rgba(249,115,22,.25); }
+.fz-next-seance-empty {
+    background: var(--card); border: 1px dashed var(--border);
+    border-radius: var(--radius); padding: 36px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; text-align: center; color: var(--muted); flex: 1;
+}
+.fz-next-seance-empty svg { width: 32px; height: 32px; fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.fz-next-seance-left { flex: 1; }
+.fz-next-seance-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.3);
+    border-radius: 20px; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .8px; color: var(--accent);
+    margin-bottom: 10px;
+}
+.fz-next-seance-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.fz-next-seance-meta { display: flex; flex-direction: column; gap: 6px; }
+.fz-next-seance-meta span { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--muted2); }
+.fz-next-seance-meta svg { width: 13px; height: 13px; fill: none; stroke: var(--muted); stroke-width: 2; flex-shrink: 0; }
+.fz-next-seance-right { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; flex-shrink: 0; }
+.fz-next-seance-duration {
+    font-family: var(--font-mono);
+    font-size: 28px; font-weight: 700; color: var(--accent);
+    line-height: 1; text-align: right;
+}
+.fz-next-seance-duration span { font-size: 12px; color: var(--muted); display: block; margin-top: 2px; font-family: var(--font-sans); }
+
+/* ── ANNULER BUTTON ── */
+.fz-annuler-btn {
+    padding: 7px 14px;
+    background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.2);
+    border-radius: var(--radius-sm); color: #ef4444;
+    font-size: 12px; font-weight: 600; font-family: var(--font-sans);
+    cursor: pointer; transition: all .2s;
+}
+.fz-annuler-btn:hover { background: rgba(239,68,68,.18); }
+
+/* ── ABO PROGRESS ── */
+.fz-abo-progress-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px;
+    display: flex; flex-direction: column;
+}
+.fz-abo-prog-inner { flex: 1; display: flex; flex-direction: column; }
+.fz-abo-prog-header { display: flex; align-items: baseline; justify-content: space-between; }
+.fz-abo-prog-name { font-size: 16px; font-weight: 700; color: var(--text); }
+.fz-abo-prog-pct { font-family: var(--font-mono); font-size: 22px; color: var(--accent); }
+.fz-abo-progress-bar { background: rgba(255,255,255,.07); border-radius: 99px; height: 8px; overflow: hidden; }
+.fz-abo-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; transition: width 1s ease; }
+.fz-abo-prog-dates { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+.fz-abo-prog-remaining { color: var(--green); font-weight: 600; }
+
+/* ── CHART CARD ── */
+.fz-chart-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px;
+}
+.fz-chart-wrap { margin: 16px 0 8px; }
+.fz-bars { display: flex; align-items: flex-end; gap: 12px; height: 100px; }
+.fz-bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; }
+.fz-bar-count { font-size: 12px; font-weight: 700; color: var(--text); font-family: var(--font-mono); }
+.fz-bar-col { flex: 1; width: 100%; display: flex; align-items: flex-end; background: rgba(255,255,255,.04); border-radius: 6px 6px 0 0; overflow: hidden; }
+.fz-bar-fill { width: 100%; background: linear-gradient(180deg, var(--accent), #c2410c); border-radius: 5px 5px 0 0; transition: height .8s cubic-bezier(.22,1,.36,1); }
+.fz-bars-legend { display: flex; gap: 12px; margin-top: 6px; }
+.fz-bars-legend span { flex: 1; text-align: center; font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 1px; }
+.fz-chart-footer { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.fz-chart-footer span { color: var(--text); font-weight: 700; font-family: var(--font-mono); }
+
+/* ── RECENT CARD ── */
+.fz-recent-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px;
+    display: flex; flex-direction: column;
+}
+.fz-recent-list { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+.fz-recent-item {
+    display: flex; align-items: center; gap: 13px;
+    padding: 11px 4px;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.fz-recent-item:last-child { border-bottom: none; }
+.fz-recent-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.dot-green  { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.dot-gray   { background: var(--muted); }
+.dot-orange { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.fz-recent-info { flex: 1; }
+.fz-recent-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.fz-recent-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.fz-recent-footer {
+    margin-top: 14px; font-size: 12px; color: var(--accent);
+    cursor: pointer; font-weight: 600; text-align: right;
+    transition: opacity .2s;
+}
+.fz-recent-footer:hover { opacity: .8; }
+</style>
+
+    <!-- Motivation banner -->
+    <div class="fz-motivation" id="fz-motivation">&#160;</div>
+
+    <!-- Welcome banner -->
+    <div class="fz-welcome-banner">
+        <div class="fz-welcome-greeting">Bienvenue,</div>
+        <div class="fz-welcome-name">
+            <span><h:outputText value="#{authBean.utilisateurConnecte.prenom}"/></span>
+            <h:outputText value=" #{authBean.utilisateurConnecte.nom}"/>
+        </div>
+        <div class="fz-welcome-sub">Voici un résumé de votre activité FITZONE.</div>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="fz-cards-grid">
+        <div class="fz-card">
+            <div class="fz-card-icon">
+                <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            </div>
+            <div class="fz-card-label">Abonnement actif</div>
+            <h:panelGroup rendered="#{membreBean.abonnementActif != null}">
+                <div class="fz-card-value orange"><h:outputText value="#{membreBean.typeAbonnementLabel}"/></div>
+                <div class="fz-card-sub">
+                    <h:outputText value="#{membreBean.joursRestants}"/> jours restants
+                </div>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{membreBean.abonnementActif == null}">
+                <div class="fz-card-value" style="color:var(--muted);font-size:18px;">Aucun</div>
+                <div class="fz-card-sub">Pas d'abonnement actif</div>
+            </h:panelGroup>
+        </div>
+
+        <div class="fz-card">
+            <div class="fz-card-icon">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="fz-card-label">Séances ce mois</div>
+            <div class="fz-card-value"><h:outputText value="#{membreBean.seancesCeMois}"/></div>
+            <div class="fz-card-sub"><h:outputText value="#{membreBean.reservationsAvenir.size()}"/> à venir</div>
+        </div>
+
+        <div class="fz-card">
+            <div class="fz-card-icon">
+                <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="fz-card-label">Présences totales</div>
+            <div class="fz-card-value"><h:outputText value="#{membreBean.totalPresences}"/></div>
+            <div class="fz-card-sub">Depuis l'inscription</div>
+        </div>
+    </div>
+
+    <!-- Row 1 : Prochaine séance + Progression abo -->
+    <div class="fz-home-row">
+        <div class="fz-next-seance-wrap">
+            <div class="fz-block-label">Prochaine séance</div>
+            <h:panelGroup rendered="#{not empty membreBean.reservationsAvenir}" layout="block">
+                <div class="fz-next-seance">
+                    <div class="fz-next-seance-left">
+                        <div class="fz-next-seance-badge">À venir</div>
+                        <div class="fz-next-seance-title">
+                            <h:outputText value="#{membreBean.reservationsAvenir[0].seance.titre}"/>
+                        </div>
+                        <div class="fz-next-seance-meta">
+                            <span>
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+                                <h:outputText value="#{membreBean.reservationsAvenir[0].seance.dateHeure}">
+                                    <f:convertDateTime pattern="EEE dd MMM — HH:mm" type="localDateTime" locale="fr"/>
+                                </h:outputText>
+                            </span>
+                            <span>
+                                <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                <h:outputText value="#{membreBean.reservationsAvenir[0].seance.salle.nomSalle}"/>
+                            </span>
+                            <span>
+                                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                Coach&#160;<h:outputText value="#{membreBean.reservationsAvenir[0].seance.coach.utilisateur.prenom}"/>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="fz-next-seance-right">
+                        <div class="fz-next-seance-duration">
+                            <h:outputText value="#{membreBean.reservationsAvenir[0].seance.duree}"/>
+                            <span>min</span>
+                        </div>
+                        <h:form>
+                            <h:commandButton value="Annuler" styleClass="fz-annuler-btn"
+                                             action="#{membreBean.annulerReservation}">
+                                <f:setPropertyActionListener
+                                    target="#{membreBean.reservationAannuler}"
+                                    value="#{membreBean.reservationsAvenir[0].id}"/>
+                            </h:commandButton>
+                        </h:form>
+                    </div>
+                </div>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{empty membreBean.reservationsAvenir}" layout="block">
+                <div class="fz-next-seance fz-next-seance-empty">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <div>Aucune séance planifiée — <a href="#" onclick="showSection('planning', document.querySelector('.fz-nav-item:nth-child(3)')); return false;" style="color:var(--accent);">S'inscrire</a></div>
+                </div>
+            </h:panelGroup>
+        </div>
+
+        <div class="fz-abo-progress-card">
+            <div class="fz-block-label">Progression abonnement</div>
+            <h:panelGroup rendered="#{membreBean.abonnementActif != null}" layout="block">
+                <div class="fz-abo-prog-inner">
+                    <div class="fz-abo-prog-header">
+                        <div class="fz-abo-prog-name"><h:outputText value="#{membreBean.typeAbonnementLabel}"/></div>
+                        <div class="fz-abo-prog-pct"><h:outputText value="#{membreBean.progressionAbonnement}"/>%</div>
+                    </div>
+                    <div class="fz-abo-progress-bar" style="margin:14px 0 10px">
+                        <div class="fz-abo-progress-fill" style="width:#{membreBean.progressionAbonnement}%"></div>
+                    </div>
+                    <div class="fz-abo-prog-dates">
+                        <span><h:outputText value="#{membreBean.abonnementActif.dateDebut}"><f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/></h:outputText></span>
+                        <span class="fz-abo-prog-remaining"><h:outputText value="#{membreBean.joursRestants}"/> j. restants</span>
+                        <span><h:outputText value="#{membreBean.abonnementActif.dateFin}"><f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/></h:outputText></span>
+                    </div>
+                </div>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{membreBean.abonnementActif == null}" layout="block">
+                <div style="padding:36px;text-align:center;color:var(--muted);">Aucun abonnement actif</div>
+            </h:panelGroup>
+        </div>
+    </div>
+
+    <!-- Row 2 : Activité + Historique rapide -->
+    <div class="fz-home-row">
+        <div class="fz-chart-card">
+            <div class="fz-block-label">Activité ce mois — séances par semaine</div>
+            <div class="fz-chart-wrap">
+                <div class="fz-bars" id="fz-bars"></div>
+                <div class="fz-bars-legend"><span>S1</span><span>S2</span><span>S3</span><span>S4</span></div>
+            </div>
+            <div class="fz-chart-footer"><span id="fz-chart-total">0</span>&#160;séances enregistrées ce mois</div>
+            <span id="chart-data"
+                  data-s1="#{membreBean.s1}"
+                  data-s2="#{membreBean.s2}"
+                  data-s3="#{membreBean.s3}"
+                  data-s4="#{membreBean.s4}"
+                  style="display:none"/>
+        </div>
+
+        <div class="fz-recent-card">
+            <div class="fz-block-label">Dernières séances</div>
+            <h:panelGroup rendered="#{not empty membreBean.reservationsHistorique}" layout="block">
+                <div class="fz-recent-list">
+                    <ui:repeat value="#{membreBean.reservationsHistorique}" var="res" begin="0" end="3">
+                        <div class="fz-recent-item">
+                            <div class="fz-recent-dot
+                                #{res.statutReservation == 'confirmee' or res.statutReservation == 'terminee' ? 'dot-green' :
+                                  res.statutReservation == 'annulee' ? 'dot-gray' : 'dot-orange'}"/>
+                            <div class="fz-recent-info">
+                                <div class="fz-recent-name"><h:outputText value="#{res.seance.titre}"/></div>
+                                <div class="fz-recent-date">
+                                    <h:outputText value="#{res.seance.dateHeure}">
+                                        <f:convertDateTime pattern="dd MMM — HH:mm" type="localDateTime" locale="fr"/>
+                                    </h:outputText>
+                                </div>
+                            </div>
+                            <span class="fz-badge
+                                #{res.statutReservation == 'confirmee' or res.statutReservation == 'terminee' ? 'fz-badge-green' :
+                                  res.statutReservation == 'annulee' ? 'fz-badge-gray' : 'fz-badge-orange'}">
+                                <h:outputText value="#{res.statutReservation == 'confirmee' ? 'Présent' :
+                                    res.statutReservation == 'terminee' ? 'Terminée' :
+                                    res.statutReservation == 'annulee' ? 'Annulée' : 'En attente'}"/>
+                            </span>
+                        </div>
+                    </ui:repeat>
+                </div>
+                <div class="fz-recent-footer"
+                     onclick="showSection('seances', document.querySelectorAll('.fz-nav-item')[1])">
+                    Voir tout l'historique →
+                </div>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{empty membreBean.reservationsHistorique}" layout="block">
+                <div style="padding:32px;text-align:center;color:var(--muted);">Aucune séance passée</div>
+            </h:panelGroup>
+        </div>
+    </div>
+
+</div><!-- /section-accueil -->
+</ui:composition>

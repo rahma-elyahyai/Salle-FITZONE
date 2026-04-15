@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FITZONE — Mon Espace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=DM+Sans:wght@300;400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <h:outputStylesheet name="css/dashboard.css"/>
+    <h:outputStylesheet name="css/dashboard.css"/>
+    <style>
+        :root {
+            --bg:        #0a0a0f;
+            --bg2:       #111118;
+            --bg3:       #18181f;
+            --border:    rgba(255,255,255,.07);
+            --accent:    #f97316;
+            --accent2:   #fb923c;
+            --green:     #22c55e;
+            --red:       #ef4444;
+            --blue:      #3b82f6;
+            --text:      #f0f0f5;
+            --muted:     #6b6b80;
+            --muted2:    #9090a0;
+            --card:      #14141c;
+            --sidebar-w: 240px;
+            --radius:    14px;
+            --radius-sm: 8px;
+            --font-sans: 'DM Sans', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-disp: 'Bebas Neue', sans-serif;
+            --shadow:    0 4px 32px rgba(0,0,0,.45);
+            --glow:      0 0 24px rgba(249,115,22,.18);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ───── SHELL ───── */
+        .fz-shell { display: flex; min-height: 100vh; }
+
+        /* ───── SIDEBAR ───── */
+        .fz-sidebar {
+            width: var(--sidebar-w);
+            background: var(--bg2);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+            padding: 0;
+            overflow: hidden;
+        }
+        .fz-sidebar::before {
+            content: '';
+            position: absolute;
+            top: -40px; left: -40px;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(249,115,22,.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .fz-sidebar-logo {
+            display: flex; align-items: center; gap: 10px;
+            padding: 22px 20px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        .fz-sidebar-logo-text {
+            font-family: var(--font-disp);
+            font-size: 22px;
+            letter-spacing: 2px;
+            color: var(--text);
+            line-height: 1;
+        }
+        .fz-sidebar-logo-sub {
+            font-size: 9px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        /* NAV */
+        .fz-nav { padding: 18px 12px; flex: 1; overflow-y: auto; }
+        .fz-nav-section {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 0 8px 10px;
+        }
+        .fz-nav-item {
+            display: flex; align-items: center; gap: 11px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--muted2);
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all .2s;
+            position: relative;
+            margin-bottom: 2px;
+            user-select: none;
+        }
+        .fz-nav-item:hover { background: rgba(255,255,255,.04); color: var(--text); }
+        .fz-nav-item.active {
+            background: rgba(249,115,22,.12);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .fz-nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 50%;
+            transform: translateY(-50%);
+            width: 3px; height: 60%;
+            background: var(--accent);
+            border-radius: 0 3px 3px 0;
+        }
+        .fz-nav-item svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; flex-shrink: 0; }
+
+        /* Badge sur nav */
+        .fz-nav-badge {
+            margin-left: auto;
+            background: var(--accent);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 20px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Sidebar footer */
+        .fz-sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .fz-logout-btn {
+            display: flex; align-items: center; gap: 10px;
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(239,68,68,.08);
+            border: 1px solid rgba(239,68,68,.2);
+            border-radius: var(--radius-sm);
+            color: #ef4444;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .fz-logout-btn:hover { background: rgba(239,68,68,.15); }
+        .fz-logout-btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+        /* ───── MAIN ───── */
+        .fz-main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* TOPBAR */
+        .fz-topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 28px;
+            height: 62px;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 50;
+        }
+        .fz-topbar-title {
+            font-family: var(--font-disp);
+            font-size: 20px;
+            letter-spacing: 2px;
+            color: var(--muted2);
+        }
+        .fz-topbar-title span { color: var(--text); }
+        .fz-topbar-right { display: flex; align-items: center; gap: 14px; }
+        .fz-topbar-date {
+            font-size: 11px; font-weight: 500; color: var(--muted);
+            font-family: var(--font-mono); letter-spacing: .5px;
+        }
+        .fz-topbar-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+        }
+        .fz-user-card { display: flex; align-items: center; gap: 10px; }
+        .fz-avatar {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #c2410c);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; color: #fff;
+            flex-shrink: 0;
+        }
+        .fz-user-name { font-size: 13px; font-weight: 600; color: var(--text); }
+        .fz-user-role { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; }
+
+        /* CONTENT */
+        .fz-content { padding: 28px; flex: 1; }
+
+        /* SECTIONS */
+        .fz-section { display: none; }
+        .fz-section.active { display: block; animation: fadeIn .3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+        /* MESSAGES JSF */
+        .fz-messages { margin-bottom: 18px; list-style: none; }
+        .fz-msg-info, .fz-msg-error {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .fz-msg-info { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25); color: var(--green); }
+        .fz-msg-error { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25); color: var(--red); }
+
+        /* SECTION HEADER */
+        .fz-section-header { margin-bottom: 28px; }
+        .fz-section-eyebrow {
+            font-size: 10px; font-weight: 700;
+            letter-spacing: 3px; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 6px;
+        }
+        .fz-section-eyebrow span { display: inline-block; }
+        .fz-section-title {
+            font-family: var(--font-disp);
+            font-size: 36px; letter-spacing: 3px;
+            color: var(--muted2); line-height: 1;
+        }
+        .fz-section-title span { color: var(--text); }
+
+        /* EMPTY STATE */
+        .fz-empty {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center;
+            padding: 56px 32px;
+            background: var(--card);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            text-align: center;
+            gap: 12px;
+        }
+        .fz-empty svg { width: 40px; height: 40px; stroke: var(--muted); fill: none; stroke-width: 1.5; }
+        .fz-empty-title { font-size: 16px; font-weight: 600; color: var(--muted2); }
+        .fz-empty-sub { font-size: 13px; color: var(--muted); max-width: 320px; }
+
+        /* BADGES */
+        .fz-badge {
+            display: inline-flex; align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10.5px; font-weight: 700;
+            letter-spacing: .5px; text-transform: uppercase;
+        }
+        .fz-badge-green  { background: rgba(34,197,94,.12);  color: #22c55e; border: 1px solid rgba(34,197,94,.25); }
+        .fz-badge-red    { background: rgba(239,68,68,.12);  color: #ef4444; border: 1px solid rgba(239,68,68,.25); }
+        .fz-badge-orange { background: rgba(249,115,22,.12); color: #f97316; border: 1px solid rgba(249,115,22,.25); }
+        .fz-badge-gray   { background: rgba(255,255,255,.05); color: var(--muted2); border: 1px solid var(--border); }
+        .fz-badge-blue   { background: rgba(59,130,246,.12); color: #3b82f6; border: 1px solid rgba(59,130,246,.25); }
+
+        /* TABLES */
+        .fz-table-wrap {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .fz-table-header {
+            padding: 16px 22px;
+            font-size: 11px; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .fz-table { width: 100%; border-collapse: collapse; }
+        .fz-table thead th {
+            padding: 12px 20px;
+            font-size: 10.5px; font-weight: 700;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--muted);
+            background: rgba(255,255,255,.02);
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+        .fz-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+        }
+        .fz-table tbody tr:last-child { border-bottom: none; }
+        .fz-table tbody tr:hover { background: rgba(255,255,255,.025); }
+        .fz-table td {
+            padding: 14px 20px;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        /* BUTTONS */
+        .fz-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px; font-weight: 600;
+            font-family: var(--font-sans);
+            cursor: pointer; border: none; transition: all .2s;
+        }
+        .fz-btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .fz-btn-primary:hover { background: var(--accent2); box-shadow: var(--glow); }
+        .fz-btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted2);
+        }
+        .fz-btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: rgba(249,115,22,.06); }
+        .fz-btn-danger {
+            background: rgba(239,68,68,.1);
+            border: 1px solid rgba(239,68,68,.25);
+            color: #ef4444;
+        }
+        .fz-btn-danger:hover { background: rgba(239,68,68,.2); }
+        .fz-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+        /* INPUT */
+        .fz-input {
+            width: 100%;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: var(--font-sans);
+            font-size: 13.5px;
+            padding: 10px 14px;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+        .fz-input:focus {
+            border-color: rgba(249,115,22,.5);
+            box-shadow: 0 0 0 3px rgba(249,115,22,.08);
+        }
+        .fz-input::placeholder { color: var(--muted); }
+        select.fz-input { cursor: pointer; }
+        select.fz-input option { background: var(--bg3); }
+
+        /* CARD */
+        .fz-card-base {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px 24px;
+        }
+        .fz-card-label {
+            font-size: 10px; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: var(--muted); margin-bottom: 8px;
+        }
+
+        /* MODAL OVERLAY */
+        .fz-modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.7);
+            z-index: 500;
+            backdrop-filter: blur(4px);
+            align-items: center; justify-content: center;
+        }
+        .fz-modal-overlay.open { display: flex; }
+        .fz-modal {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 32px;
+            width: 100%; max-width: 440px;
+            box-shadow: var(--shadow);
+            animation: modalIn .25s ease;
+        }
+        @keyframes modalIn { from { opacity: 0; transform: scale(.95) translateY(12px); } to { opacity: 1; transform: none; } }
+        .fz-modal-title {
+            font-family: var(--font-disp);
+            font-size: 24px; letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+        .fz-modal-title span { color: var(--accent); }
+        .fz-modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+
+        /* TOAST */
+        #fz-toast-container {
+            position: fixed; bottom: 24px; right: 24px;
+            z-index: 9999; display: flex; flex-direction: column; gap: 10px;
+        }
+        .fz-toast {
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px; font-weight: 500;
+            display: flex; align-items: center; gap: 10px;
+            animation: toastIn .3s ease;
+            max-width: 340px;
+            box-shadow: var(--shadow);
+        }
+        .fz-toast-success { background: rgba(34,197,94,.15); border: 1px solid rgba(34,197,94,.3); color: #22c55e; }
+        .fz-toast-error   { background: rgba(239,68,68,.15);  border: 1px solid rgba(239,68,68,.3);  color: #ef4444; }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+
+        /* SCROLL */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 10px; }
+    </style>
+</h:head>
+
+<h:body>
+<div id="fz-toast-container"></div>
+<div class="fz-shell">
+
+    <!-- ══════════ SIDEBAR ══════════ -->
+    <aside class="fz-sidebar">
+        <div class="fz-sidebar-logo">
+            <h:graphicImage library="images" name="logo.png"
+                            alt="FITZONE"
+                            style="width:32px;height:32px;object-fit:contain;mix-blend-mode:lighten;"/>
+            <div>
+                <div class="fz-sidebar-logo-text">FITZONE</div>
+                <div class="fz-sidebar-logo-sub">Club Management</div>
+            </div>
+        </div>
+
+        <nav class="fz-nav">
+            <div class="fz-nav-section">Navigation</div>
+
+            <div class="fz-nav-item active" onclick="showSection('accueil',this)">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+                Tableau de bord
+            </div>
+            <div class="fz-nav-item" onclick="showSection('seances',this)">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Mes Séances
+                <span class="fz-nav-badge" id="nav-badge-seances">0</span>
+            </div>
+            <div class="fz-nav-item" onclick="showSection('planning',this)">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                S'inscrire
+            </div>
+            <div class="fz-nav-item" onclick="showSection('abonnements',this)">
+                <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Abonnements
+            </div>
+            <div class="fz-nav-item" onclick="showSection('profil',this)">
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Mon Profil
+            </div>
+        </nav>
+
+        <div class="fz-sidebar-footer">
+            <h:form id="logoutForm">
+                <button type="button" class="fz-logout-btn"
+                        onclick="document.getElementById('logoutForm:logoutBtn').click()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Déconnexion
+                </button>
+                <h:commandButton id="logoutBtn" action="#{authBean.logout}" style="display:none"/>
+            </h:form>
+        </div>
+    </aside>
+
+    <!-- ══════════ MAIN ══════════ -->
+    <main class="fz-main">
+        <div class="fz-topbar">
+            <div class="fz-topbar-title" id="topbarTitle">Espace <span>Membre</span></div>
+            <div class="fz-topbar-right">
+                <div class="fz-topbar-date" id="topbarDate"></div>
+                <div class="fz-topbar-dot"></div>
+                <div class="fz-user-card">
+                    <div class="fz-avatar"><h:outputText value="#{authBean.initiales}"/></div>
+                    <div>
+                        <div class="fz-user-name">
+                            <h:outputText value="#{authBean.utilisateurConnecte.prenom} #{authBean.utilisateurConnecte.nom}"/>
+                        </div>
+                        <div class="fz-user-role">Membre</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fz-content">
+            <!-- ═══════ INCLUDE SECTIONS ═══════ -->
+            <ui:include src="membre-accueil.xhtml"/>
+            <ui:include src="membre-seances.xhtml"/>
+            <ui:include src="membre-planning.xhtml"/>
+            <ui:include src="membre-abonnements.xhtml"/>
+            <ui:include src="membre-profil.xhtml"/>
+        </div>
+    </main>
+</div>
+
+<h:outputScript>
+//<![CDATA[
+/* ── Navigation ── */
+var sectionTitles = {
+    accueil:      'Tableau de bord',
+    seances:      'Mes Séances',
+    planning:     "S'inscrire",
+    abonnements:  'Abonnements',
+    profil:       'Mon Profil'
+};
+function showSection(id, navItem) {
+    document.querySelectorAll('.fz-section').forEach(function(s){ s.classList.remove('active'); });
+    document.querySelectorAll('.fz-nav-item').forEach(function(n){ n.classList.remove('active'); });
+    var sec = document.getElementById('section-' + id);
+    if (sec) sec.classList.add('active');
+    if (navItem) navItem.classList.add('active');
+    document.getElementById('topbarTitle').innerHTML =
+        'Espace <span>' + (sectionTitles[id] || id) + '</span>';
+}
+
+/* ── Date topbar ── */
+(function(){
+    var days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    var months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    var d = new Date();
+    var el = document.getElementById('topbarDate');
+    if (el) el.textContent = days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+})();
+
+/* ── Badge séances à venir ── */
+(function(){
+    var badge = document.getElementById('nav-badge-seances');
+    var cards = document.querySelectorAll('.fz-seance-card');
+    if (badge) badge.textContent = cards.length || '0';
+    if (badge && (!cards.length || cards.length === 0)) badge.style.display = 'none';
+})();
+
+/* ── Toast ── */
+function showToast(msg, type) {
+    var c = document.getElementById('fz-toast-container');
+    var t = document.createElement('div');
+    t.className = 'fz-toast fz-toast-' + (type || 'success');
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(function(){ t.style.opacity = '0'; t.style.transition = 'opacity .4s'; }, 3200);
+    setTimeout(function(){ t.remove(); }, 3700);
+}
+
+/* ── Modal helpers ── */
+function openModal(id)  { var m = document.getElementById(id); if(m) m.classList.add('open'); }
+function closeModal(id) { var m = document.getElementById(id); if(m) m.classList.remove('open'); }
+document.addEventListener('click', function(e){
+    if (e.target.classList.contains('fz-modal-overlay')) e.target.classList.remove('open');
+});
+
+/* ── Motivation banner ── */
+(function(){
+    var h = new Date().getHours();
+    var el = document.getElementById('fz-motivation');
+    var prenom = document.querySelector('.fz-welcome-name span');
+    var nom = prenom ? prenom.textContent.trim() : '';
+    var sets = {
+        morning: ['☀️ Bonne matinée '+nom+' ! Le sport du matin booste toute la journée.','🏋️ Ce matin c\'est le bon moment pour donner le meilleur, '+nom+' !'],
+        afternoon: ['⚡ Bonne après-midi '+nom+' ! Énergie au max.','🔥 L\'après-midi, c\'est parfait pour brûler des calories, '+nom+' !'],
+        evening: ['🌙 Bonne soirée '+nom+' ! Une séance ce soir ?','✨ La motivation ne dort jamais, '+nom+'. Bonne séance !']
+    };
+    var msgs = h >= 5 && h < 12 ? sets.morning : h < 18 ? sets.afternoon : sets.evening;
+    if (el) el.textContent = msgs[Math.floor(Math.random()*msgs.length)];
+})();
+
+/* ── Bar chart ── */
+(function(){
+    var chartEl = document.getElementById('chart-data');
+    if (!chartEl) return;
+    var data = [
+        parseInt(chartEl.dataset.s1)||0,
+        parseInt(chartEl.dataset.s2)||0,
+        parseInt(chartEl.dataset.s3)||0,
+        parseInt(chartEl.dataset.s4)||0
+    ];
+    var max = Math.max.apply(null, data) || 1;
+    var total = data.reduce(function(a,b){return a+b;},0);
+    var barsEl = document.getElementById('fz-bars');
+    var totalEl = document.getElementById('fz-chart-total');
+    if (barsEl) {
+        barsEl.innerHTML = data.map(function(v){
+            var pct = Math.round((v/max)*100);
+            return '<div class="fz-bar-item">' +
+                '<div class="fz-bar-count">'+v+'</div>' +
+                '<div class="fz-bar-col"><div class="fz-bar-fill" style="height:0" data-pct="'+pct+'"></div></div>' +
+                '</div>';
+        }).join('');
+        setTimeout(function(){
+            barsEl.querySelectorAll('.fz-bar-fill').forEach(function(b){
+                b.style.height = b.dataset.pct + '%';
+            });
+        }, 120);
+    }
+    if (totalEl) totalEl.textContent = total;
+})();
+//]]>
+</h:outputScript>
+</h:body>
+</html>

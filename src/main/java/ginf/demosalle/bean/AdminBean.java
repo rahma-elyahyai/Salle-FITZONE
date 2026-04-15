@@ -477,6 +477,54 @@ public class AdminBean implements Serializable {
 
     private void addInfo(String msg)  { FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,  msg, null)); }
     private void addError(String msg) { FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, null)); }
+    // ═══════════════════════════════════════════════════════════════════
+// MÉTHODES À AJOUTER dans AdminBean.java
+// Placez ces méthodes dans la section "── Helpers ──"
+// ═══════════════════════════════════════════════════════════════════
+
+    /**
+     * Retourne vrai si le membre (par userId) possède un abonnement actif.
+     * Utilisé dans membres.xhtml pour l'indicateur de statut.
+     */
+    public boolean aAbonnementActif(Integer userId) {
+        if (userId == null) return false;
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            long count = s.createQuery(
+                            "SELECT COUNT(a) FROM Abonnement a " +
+                                    "WHERE a.membre.id = :uid AND a.statut = :st", Long.class)
+                    .setParameter("uid", userId)
+                    .setParameter("st", Abonnement.Statut.actif)
+                    .uniqueResult();
+            return count > 0;
+        }
+    }
+
+    /**
+     * Retourne la spécialité d'un coach par son userId (Utilisateur.id).
+     * Utilisé dans coachs.xhtml pour afficher le badge spécialité.
+     */
+    public String getSpecialiteCoach(Integer userId) {
+        if (userId == null) return "—";
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            Coach coach = s.createQuery(
+                            "FROM Coach c WHERE c.utilisateur.id = :uid", Coach.class)
+                    .setParameter("uid", userId)
+                    .uniqueResult();
+            if (coach == null || coach.getSpecialite() == null) return "—";
+            return coach.getSpecialite();
+        }
+    }
+
+    /**
+     * Calcule le pourcentage de remplissage d'une séance (0–100).
+     * Utilisé dans seances.xhtml pour la barre de capacité.
+     */
+    public int getPct(Integer seanceId, Integer capaciteMax) {
+        if (seanceId == null || capaciteMax == null || capaciteMax == 0) return 0;
+        long inscrits = getNbInscrits(seanceId);
+        int pct = (int) Math.round((inscrits * 100.0) / capaciteMax);
+        return Math.min(pct, 100);
+    }
 
     // ── Getters / Setters ────────────────────────────────────
     public List<Utilisateur> getTousMembers()       { return tousMembers      != null ? tousMembers      : Collections.emptyList(); }

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FITZONE — Membres</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+    <h:outputStylesheet name="css/dashboard-admin.css"/>
+    <style>
+        /* Indicateur statut abonnement inline */
+        .fz-abo-pill { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; }
+        .fz-abo-pill.actif  { color:var(--green-lt); }
+        .fz-abo-pill.aucun  { color:var(--muted); }
+        .fz-abo-pill::before { content:''; width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+        .fz-abo-pill.actif::before { background:var(--green); box-shadow:0 0 5px var(--green); }
+        .fz-abo-pill.aucun::before { background:var(--muted2); }
+    </style>
+</h:head>
+
+<h:body>
+<!-- MODAL CONFIRMATION SUPPRESSION -->
+<div class="fz-overlay" id="modalSuppMembre">
+    <div class="fz-modal">
+        <div class="fz-modal-icon danger">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </div>
+        <div class="fz-modal-title">SUPPRIMER CE MEMBRE ?</div>
+        <div class="fz-modal-sub">Cette action est <strong>irréversible</strong>. Toutes les réservations et abonnements associés à ce membre seront également supprimés.</div>
+        <div class="fz-modal-actions">
+            <button type="button" class="fz-btn fz-btn-ghost fz-btn-sm" onclick="closeModal('modalSuppMembre')">Annuler</button>
+            <h:form id="formSuppMembre">
+                <h:inputHidden value="#{adminBean.idASupprimer}"/>
+                <h:commandButton value="Supprimer définitivement"
+                                 action="#{adminBean.supprimerMembre}"
+                                 styleClass="fz-btn fz-btn-sm"
+                                 style="background:var(--red);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;padding:9px 18px;border:none;border-radius:var(--radius);cursor:pointer;"/>
+            </h:form>
+        </div>
+    </div>
+</div>
+
+<div class="fz-shell">
+    <!-- SIDEBAR -->
+    <aside class="fz-sidebar">
+        <div class="fz-sidebar-logo">
+            <h:graphicImage library="images" name="logo.png" alt="FITZONE" style="width:36px;height:36px;object-fit:contain;mix-blend-mode:lighten;"/>
+            <div>
+                <div class="fz-sidebar-logo-text">FITZONE</div>
+                <div class="fz-sidebar-logo-sub">Administration</div>
+            </div>
+        </div>
+        <div class="fz-user-card">
+            <div class="fz-avatar fz-avatar-admin"><h:outputText value="#{authBean.initiales}"/></div>
+            <div>
+                <div class="fz-user-name"><h:outputText value="#{authBean.utilisateurConnecte.prenom} #{authBean.utilisateurConnecte.nom}"/></div>
+                <div class="fz-user-role fz-role-admin">Administrateur</div>
+            </div>
+        </div>
+        <nav class="fz-nav">
+            <div class="fz-nav-section">Navigation</div>
+            <h:outputLink value="dashboard.xhtml" styleClass="fz-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+                Tableau de bord
+            </h:outputLink>
+            <div class="fz-nav-item active">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Membres
+            </div>
+            <h:outputLink value="coachs.xhtml" styleClass="fz-nav-item">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+                Coachs
+            </h:outputLink>
+            <h:outputLink value="seances.xhtml" styleClass="fz-nav-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Séances
+            </h:outputLink>
+            <h:outputLink value="abonnements.xhtml" styleClass="fz-nav-item">
+                <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Abonnements
+            </h:outputLink>
+        </nav>
+        <div class="fz-sidebar-footer">
+            <h:form><h:commandButton action="#{authBean.logout}" styleClass="fz-logout-btn" value="Déconnexion"/></h:form>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="fz-main">
+        <div class="fz-topbar">
+            <div class="fz-topbar-title">Admin <span>Membres</span></div>
+            <div class="fz-topbar-right">
+                <div class="fz-topbar-date" id="topbarDate"></div>
+                <div class="fz-topbar-dot"></div>
+                <div class="fz-user-card-top">
+                    <div class="fz-avatar fz-avatar-admin" style="width:30px;height:30px;font-size:12px"><h:outputText value="#{authBean.initiales}"/></div>
+                    <div class="fz-user-name" style="font-size:12px"><h:outputText value="#{authBean.utilisateurConnecte.prenom}"/></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fz-global-messages">
+            <h:messages globalOnly="false" styleClass="fz-messages" infoClass="fz-msg-info" errorClass="fz-msg-error"/>
+        </div>
+
+        <div class="fz-content">
+            <div class="fz-section-header">
+                <div class="fz-section-header-left">
+                    <div class="fz-section-eyebrow fz-eyebrow-purple"><span>Gestion</span></div>
+                    <div class="fz-section-title">GESTION DES <span class="purple">MEMBRES</span></div>
+                </div>
+                <!-- Compteur -->
+                <div style="text-align:right">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--purple-lt)"><h:outputText value="#{adminBean.nbMembres}"/></div>
+                    <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">membres inscrits</div>
+                </div>
+            </div>
+
+            <!-- TABLE MEMBRES -->
+            <div class="fz-table-wrap">
+                <div class="fz-table-header">
+                    <div class="fz-table-header-left"><h:outputText value="#{adminBean.nbMembres}"/> membres</div>
+                    <div class="fz-table-search">
+                        <input type="text" id="searchMembre" placeholder="🔍  Rechercher un membre…" oninput="filterTable('tableMembres',this.value)"/>
+                    </div>
+                </div>
+
+                <h:panelGroup rendered="#{not empty adminBean.tousMembers}" layout="block">
+                    <table class="fz-table" id="tableMembres">
+                        <thead>
+                            <tr>
+                                <th>Membre</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
+                                <th>Inscription</th>
+                                <th>Abonnement</th>
+                                <th style="text-align:right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ui:repeat value="#{adminBean.tousMembers}" var="m">
+                                <tr>
+                                    <td>
+                                        <div class="fz-table-user">
+                                            <div class="fz-mini-avatar fz-mini-purple">
+                                                <h:outputText value="#{m.initiales}"/>
+                                            </div>
+                                            <div class="fz-user-info-small">
+                                                <div class="fz-name"><h:outputText value="#{m.prenom} #{m.nom}"/></div>
+                                                <div class="fz-email" style="font-size:11px;color:var(--muted)">ID: <h:outputText value="#{m.id}"/></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><h:outputText value="#{m.email}"/></td>
+                                    <td><h:outputText value="#{empty m.telephone ? '—' : m.telephone}"/></td>
+                                    <td>
+                                        <h:outputText value="#{m.dateCreation}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" type="localDateTime"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td>
+                                        <!-- Indicateur statut abonnement via bean -->
+                                        <span class="fz-abo-pill #{adminBean.aAbonnementActif(m.id) ? 'actif' : 'aucun'}">
+                                            <h:outputText value="#{adminBean.aAbonnementActif(m.id) ? 'Actif' : 'Aucun'}"/>
+                                        </span>
+                                    </td>
+                                    <td style="text-align:right">
+                                        <div class="fz-action-btns" style="justify-content:flex-end">
+                                            <!-- Voir abonnements de ce membre -->
+                                            <h:outputLink value="abonnements.xhtml"
+                                                          styleClass="fz-btn-view-soft fz-btn-xs"
+                                                          style="border-radius:6px;padding:5px 10px;">
+                                                Abonnements
+                                            </h:outputLink>
+                                            <!-- Supprimer avec modal -->
+                                            <button type="button"
+                                                    class="fz-btn-danger-soft fz-btn-xs"
+                                                    style="border-radius:6px;padding:5px 10px;"
+                                                    onclick="openDeleteModal('modalSuppMembre', '#{m.id}')">
+                                                Supprimer
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{empty adminBean.tousMembers}" layout="block">
+                    <div class="fz-empty">
+                        <div class="fz-empty-icon">👤</div>
+                        <div class="fz-empty-title">AUCUN MEMBRE</div>
+                        <div class="fz-empty-sub">Les membres s'inscrivent depuis le portail client.</div>
+                    </div>
+                </h:panelGroup>
+            </div>
+        </div>
+    </main>
+</div>
+
+<h:outputScript>
+//<![CDATA[
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function openDeleteModal(modalId, membreId){
+    // Met à jour le champ caché dans le formulaire de suppression
+    var form = document.getElementById('formSuppMembre');
+    var hidden = form.querySelector('input[type="hidden"]');
+    if(hidden){ hidden.value = membreId; }
+    openModal(modalId);
+}
+
+document.getElementById('modalSuppMembre').addEventListener('click', function(e){
+    if(e.target === this) closeModal('modalSuppMembre');
+});
+
+function filterTable(tableId, query){
+    var rows = document.getElementById(tableId).querySelectorAll('tbody tr');
+    var q = query.toLowerCase().trim();
+    rows.forEach(function(row){
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+
+(function(){
+    var days=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    var months=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    var d=new Date();
+    document.getElementById('topbarDate').textContent=days[d.getDay()]+' '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
+})();
+//]]>
+</h:outputScript>
+</h:body>
+</html>

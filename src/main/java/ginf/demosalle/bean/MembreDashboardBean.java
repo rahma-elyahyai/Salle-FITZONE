@@ -20,13 +20,22 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Bean dashboard membre — CRUD complet :
+ *   READ   : abonnement actif, séances dispo, réservations, historiques
+ *   CREATE : inscrire à une séance
+ *   UPDATE : annuler une réservation, modifier profil, changer mot de passe
+ *   DELETE : (annulation de réservation = soft-delete)
+ */
 @Named("membreBean")
 @SessionScoped
 public class MembreDashboardBean implements Serializable {
 
+    // ─── Injection ─────────────────────────────────
     @Inject
     private AuthBean authBean;
 
+    // ─── Entités chargées ──────────────────────────
     private Membre     membre;
     private Abonnement abonnementActif;
 
@@ -35,17 +44,28 @@ public class MembreDashboardBean implements Serializable {
     private List<Seance>      seancesDisponibles;
     private List<Abonnement>  historiquesAbonnements;
 
+    // ─── Stats ─────────────────────────────────────
     private long seancesCeMois;
     private long totalPresences;
     private int s1, s2, s3, s4;
 
+    // ─── Champs formulaire profil ──────────────────
     private String  telephone;
     private String  adresse;
     private boolean modeEditionProfil = false;
 
+    // ─── Champs formulaire mot de passe (nouveaux) ─
+    private String ancienMotDePasse;
+    private String nouveauMotDePasse;
+    private String confirmationMotDePasse;
+
+    // ─── Action IDs ────────────────────────────────
     private Integer seanceAInscrire;
     private Integer reservationAannuler;
 
+    // ═══════════════════════════════════════════════
+    //  INIT
+    // ═══════════════════════════════════════════════
     @PostConstruct
     public void init() {
         Utilisateur u = authBean.getUtilisateurConnecte();
@@ -62,6 +82,9 @@ public class MembreDashboardBean implements Serializable {
         chargerDonnees();
     }
 
+    // ═══════════════════════════════════════════════
+    //  READ — charger toutes les données du dashboard
+    // ═══════════════════════════════════════════════
     public void chargerDonnees() {
         if (membre == null) return;
         LocalDateTime now   = LocalDateTime.now();
@@ -69,98 +92,80 @@ public class MembreDashboardBean implements Serializable {
 
         try (Session s = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Abonnement actif
+            /* Abonnement actif */
             List<Abonnement> abos = s.createQuery(
                             "FROM Abonnement a WHERE a.membre.id = :mid " +
-                                    "AND a.statut = :st AND a.dateFin >= :today ORDER BY a.dateFin DESC", Abonnement.class)
-                    .setParameter("mid", membre.getId())
-                    .setParameter("st",  Abonnement.Statut.actif)
+                            "AND a.statut = :st AND a.dateFin >= :today ORDER BY a.dateFin DESC", Abonnement.class)
+                    .setParameter("mid",   membre.getId())
+                    .setParameter("st",    Abonnement.Statut.actif)
                     .setParameter("today", today)
                     .setMaxResults(1).getResultList();
             abonnementActif = abos.isEmpty() ? null : abos.get(0);
 
-            // Reservations avenir + initialisation eager des associations
+            /* Réservations à venir */
             reservationsAvenir = s.createQuery(
                             "FROM Reservation r WHERE r.membre.id = :mid " +
-                                    "AND r.seance.dateHeure > :now AND r.statutReservation <> :ann " +
-                                    "ORDER BY r.seance.dateHeure ASC", Reservation.class)
+                            "AND r.seance.dateHeure > :now AND r.statutReservation <> :ann " +
+                            "ORDER BY r.seance.dateHeure ASC", Reservation.class)
                     .setParameter("mid", membre.getId())
                     .setParameter("now", now)
                     .setParameter("ann", Reservation.Statut.annulee).getResultList();
-            for (Reservation r : reservationsAvenir) {
-                org.hibernate.Hibernate.initialize(r.getSeance());
-                if (r.getSeance() != null) {
-                    org.hibernate.Hibernate.initialize(r.getSeance().getSalle());
-                    org.hibernate.Hibernate.initialize(r.getSeance().getCoach());
-                    if (r.getSeance().getCoach() != null)
-                        org.hibernate.Hibernate.initialize(r.getSeance().getCoach().getUtilisateur());
-                }
-            }
+            initReservations(reservationsAvenir);
 
-            // Reservations historique + initialisation eager
+            /* Réservations historique */
             reservationsHistorique = s.createQuery(
                             "FROM Reservation r WHERE r.membre.id = :mid " +
-                                    "AND r.seance.dateHeure <= :now ORDER BY r.seance.dateHeure DESC", Reservation.class)
+                            "AND r.seance.dateHeure <= :now ORDER BY r.seance.dateHeure DESC", Reservation.class)
                     .setParameter("mid", membre.getId())
                     .setParameter("now", now).getResultList();
-            for (Reservation r : reservationsHistorique) {
-                org.hibernate.Hibernate.initialize(r.getSeance());
-                if (r.getSeance() != null) {
-                    org.hibernate.Hibernate.initialize(r.getSeance().getSalle());
-                    org.hibernate.Hibernate.initialize(r.getSeance().getCoach());
-                    if (r.getSeance().getCoach() != null)
-                        org.hibernate.Hibernate.initialize(r.getSeance().getCoach().getUtilisateur());
-                }
-            }
+            initReservations(reservationsHistorique);
 
-            // Stats mois
+            /* Stats mois */
             LocalDateTime debut = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
             LocalDateTime fin   = now.withDayOfMonth(today.lengthOfMonth()).withHour(23).withMinute(59);
 
             seancesCeMois = s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.membre.id = :mid " +
-                                    "AND r.seance.dateHeure BETWEEN :debut AND :fin " +
-                                    "AND r.statutReservation <> :ann", Long.class)
+                            "AND r.seance.dateHeure BETWEEN :debut AND :fin " +
+                            "AND r.statutReservation <> :ann", Long.class)
                     .setParameter("mid", membre.getId())
                     .setParameter("debut", debut).setParameter("fin", fin)
-                    .setParameter("ann", Reservation.Statut.annulee).uniqueResult();
+                    .setParameter("ann",  Reservation.Statut.annulee).uniqueResult();
 
             totalPresences = s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.membre.id = :mid " +
-                                    "AND (r.statutReservation = :conf OR r.statutReservation = :term)", Long.class)
+                            "AND (r.statutReservation = :conf OR r.statutReservation = :term)", Long.class)
                     .setParameter("mid",  membre.getId())
                     .setParameter("conf", Reservation.Statut.confirmee)
                     .setParameter("term", Reservation.Statut.terminee).uniqueResult();
 
-            // Bar chart
-            s1 = cntSem(s, debut,               debut.plusDays(6));
-            s2 = cntSem(s, debut.plusDays(7),   debut.plusDays(13));
-            s3 = cntSem(s, debut.plusDays(14),  debut.plusDays(20));
-            s4 = cntSem(s, debut.plusDays(21),  fin);
+            /* Bar chart semaines */
+            s1 = cntSem(s, debut,             debut.plusDays(6));
+            s2 = cntSem(s, debut.plusDays(7),  debut.plusDays(13));
+            s3 = cntSem(s, debut.plusDays(14), debut.plusDays(20));
+            s4 = cntSem(s, debut.plusDays(21), fin);
 
-            // Séances disponibles
+            /* Séances disponibles (non inscrit, planifiées, futures) */
             List<Integer> dejInscrits = s.createQuery(
                             "SELECT r.seance.id FROM Reservation r WHERE r.membre.id = :mid " +
-                                    "AND r.seance.dateHeure > :now AND r.statutReservation <> :ann", Integer.class)
+                            "AND r.seance.dateHeure > :now AND r.statutReservation <> :ann", Integer.class)
                     .setParameter("mid", membre.getId())
                     .setParameter("now", now)
                     .setParameter("ann", Reservation.Statut.annulee).getResultList();
 
-            if (dejInscrits.isEmpty()) {
-                seancesDisponibles = s.createQuery(
-                                "FROM Seance s WHERE s.dateHeure > :now AND s.statut = :pl " +
-                                        "ORDER BY s.dateHeure ASC", Seance.class)
+            seancesDisponibles = dejInscrits.isEmpty()
+                ? s.createQuery(
+                            "FROM Seance s WHERE s.dateHeure > :now AND s.statut = :pl " +
+                            "ORDER BY s.dateHeure ASC", Seance.class)
                         .setParameter("now", now)
-                        .setParameter("pl",  Seance.Statut.planifiee).getResultList();
-            } else {
-                seancesDisponibles = s.createQuery(
-                                "FROM Seance s WHERE s.dateHeure > :now AND s.statut = :pl " +
-                                        "AND s.id NOT IN :exclu ORDER BY s.dateHeure ASC", Seance.class)
+                        .setParameter("pl",  Seance.Statut.planifiee).getResultList()
+                : s.createQuery(
+                            "FROM Seance s WHERE s.dateHeure > :now AND s.statut = :pl " +
+                            "AND s.id NOT IN :exclu ORDER BY s.dateHeure ASC", Seance.class)
                         .setParameter("now",   now)
                         .setParameter("pl",    Seance.Statut.planifiee)
                         .setParameter("exclu", dejInscrits).getResultList();
-            }
-            // Initialisation eager des associations des séances disponibles
+
             for (Seance seance : seancesDisponibles) {
                 org.hibernate.Hibernate.initialize(seance.getSalle());
                 org.hibernate.Hibernate.initialize(seance.getCoach());
@@ -168,24 +173,40 @@ public class MembreDashboardBean implements Serializable {
                     org.hibernate.Hibernate.initialize(seance.getCoach().getUtilisateur());
             }
 
-            // Historique abonnements
+            /* Historique abonnements */
             historiquesAbonnements = s.createQuery(
                             "FROM Abonnement a WHERE a.membre.id = :mid ORDER BY a.dateDebut DESC", Abonnement.class)
                     .setParameter("mid", membre.getId()).getResultList();
         }
     }
 
+    /** Initialise les associations Hibernate des réservations (évite LazyInit). */
+    private void initReservations(List<Reservation> liste) {
+        for (Reservation r : liste) {
+            org.hibernate.Hibernate.initialize(r.getSeance());
+            if (r.getSeance() != null) {
+                org.hibernate.Hibernate.initialize(r.getSeance().getSalle());
+                org.hibernate.Hibernate.initialize(r.getSeance().getCoach());
+                if (r.getSeance().getCoach() != null)
+                    org.hibernate.Hibernate.initialize(r.getSeance().getCoach().getUtilisateur());
+            }
+        }
+    }
+
     private int cntSem(Session s, LocalDateTime d, LocalDateTime f) {
         Long n = s.createQuery(
                         "SELECT COUNT(r) FROM Reservation r WHERE r.membre.id = :mid " +
-                                "AND r.seance.dateHeure BETWEEN :d AND :f " +
-                                "AND r.statutReservation <> :ann", Long.class)
+                        "AND r.seance.dateHeure BETWEEN :d AND :f " +
+                        "AND r.statutReservation <> :ann", Long.class)
                 .setParameter("mid", membre.getId())
                 .setParameter("d", d).setParameter("f", f)
                 .setParameter("ann", Reservation.Statut.annulee).uniqueResult();
         return n == null ? 0 : n.intValue();
     }
 
+    // ═══════════════════════════════════════════════
+    //  CREATE — s'inscrire à une séance
+    // ═══════════════════════════════════════════════
     public void inscrire() {
         if (seanceAInscrire == null || membre == null) return;
         Transaction tx = null;
@@ -196,18 +217,20 @@ public class MembreDashboardBean implements Serializable {
 
             long inscrits = s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.seance.id = :sid " +
-                                    "AND r.statutReservation <> :ann", Long.class)
+                            "AND r.statutReservation <> :ann", Long.class)
                     .setParameter("sid", seanceAInscrire)
                     .setParameter("ann", Reservation.Statut.annulee).uniqueResult();
-            if (inscrits >= seance.getCapaciteMaximale()) { addError("Séance complète."); return; }
+            if (inscrits >= seance.getCapaciteMaximale()) {
+                addError("Séance complète — impossible de s'inscrire."); return;
+            }
 
             long doublon = s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.membre.id = :mid " +
-                                    "AND r.seance.id = :sid AND r.statutReservation <> :ann", Long.class)
+                            "AND r.seance.id = :sid AND r.statutReservation <> :ann", Long.class)
                     .setParameter("mid", membre.getId())
                     .setParameter("sid", seanceAInscrire)
                     .setParameter("ann", Reservation.Statut.annulee).uniqueResult();
-            if (doublon > 0) { addError("Déjà inscrit(e) à cette séance."); return; }
+            if (doublon > 0) { addError("Vous êtes déjà inscrit(e) à cette séance."); return; }
 
             Reservation r = new Reservation();
             r.setSeance(seance);
@@ -216,14 +239,17 @@ public class MembreDashboardBean implements Serializable {
             r.setStatutReservation(Reservation.Statut.confirmee);
             s.persist(r);
             tx.commit();
-            addInfo("Inscription confirmée : « " + seance.getTitre() + " » !");
+            addInfo("✅ Inscription confirmée : « " + seance.getTitre() + " » !");
             chargerDonnees();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            addError("Erreur inscription : " + e.getMessage());
+            addError("Erreur lors de l'inscription : " + e.getMessage());
         }
     }
 
+    // ═══════════════════════════════════════════════
+    //  UPDATE — annuler une réservation (soft-delete)
+    // ═══════════════════════════════════════════════
     public void annulerReservation() {
         if (reservationAannuler == null) return;
         Transaction tx = null;
@@ -235,44 +261,132 @@ public class MembreDashboardBean implements Serializable {
                 r.setDateAnnulation(LocalDateTime.now());
                 s.merge(r);
                 tx.commit();
-                addInfo("Réservation annulée.");
+                addInfo("Réservation annulée avec succès.");
+            } else {
+                addError("Réservation introuvable ou accès refusé.");
+                if (tx.isActive()) tx.rollback();
             }
             chargerDonnees();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            addError("Erreur annulation : " + e.getMessage());
+            if (tx != null && tx.isActive()) tx.rollback();
+            addError("Erreur lors de l'annulation : " + e.getMessage());
         }
     }
 
+    // ═══════════════════════════════════════════════
+    //  UPDATE — sauvegarder profil (téléphone + adresse)
+    // ═══════════════════════════════════════════════
     public void sauvegarderProfil() {
         Transaction tx = null;
         try (Session s = HibernateUtil.getSessionFactory().openSession()) {
             tx = s.beginTransaction();
-            Utilisateur u = authBean.getUtilisateurConnecte();
+            Utilisateur u = s.get(Utilisateur.class, authBean.getUtilisateurConnecte().getId());
             u.setTelephone(telephone);
-            membre.setAdresse(adresse);
+            Membre m = s.get(Membre.class, membre.getId());
+            m.setAdresse(adresse);
             s.merge(u);
-            s.merge(membre);
+            s.merge(m);
             tx.commit();
+            // Rafraîchir le bean authBean
+            authBean.getUtilisateurConnecte().setTelephone(telephone);
+            membre.setAdresse(adresse);
             modeEditionProfil = false;
-            addInfo("Profil mis à jour !");
+            addInfo("✅ Profil mis à jour avec succès !");
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            addError("Erreur sauvegarde : " + e.getMessage());
+            if (tx != null && tx.isActive()) tx.rollback();
+            addError("Erreur lors de la sauvegarde : " + e.getMessage());
         }
     }
 
-    public void activerEdition() {
-        telephone = authBean.getUtilisateurConnecte().getTelephone();
-        adresse   = membre != null ? membre.getAdresse() : "";
-        modeEditionProfil = true;
+    // ═══════════════════════════════════════════════
+    //  UPDATE — changer le mot de passe (nouveau CRUD)
+    // ═══════════════════════════════════════════════
+    public void changerMotDePasse() {
+        /* Validations métier */
+        if (ancienMotDePasse == null || ancienMotDePasse.isBlank()) {
+            addError("Veuillez saisir votre mot de passe actuel."); return;
+        }
+        if (nouveauMotDePasse == null || nouveauMotDePasse.length() < 8) {
+            addError("Le nouveau mot de passe doit contenir au moins 8 caractères."); return;
+        }
+        if (!nouveauMotDePasse.equals(confirmationMotDePasse)) {
+            addError("Les deux mots de passe ne correspondent pas."); return;
+        }
+
+        Transaction tx = null;
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            tx = s.beginTransaction();
+            Utilisateur u = s.get(Utilisateur.class, authBean.getUtilisateurConnecte().getId());
+
+            /* Vérifier l'ancien mot de passe (supposant stockage BCrypt ou plain) */
+            if (!verifierMotDePasse(ancienMotDePasse, u.getMdp())) {
+                addError("Le mot de passe actuel est incorrect.");
+                tx.rollback(); return;
+            }
+
+            u.setMdp(hasherMotDePasse(nouveauMotDePasse));
+            s.merge(u);
+            tx.commit();
+
+            /* Reset champs */
+            ancienMotDePasse      = null;
+            nouveauMotDePasse     = null;
+            confirmationMotDePasse = null;
+
+            addInfo("🔐 Mot de passe modifié avec succès !");
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) tx.rollback();
+            addError("Erreur lors du changement : " + e.getMessage());
+        }
     }
 
+    /**
+     * Vérification du mot de passe.
+     * À adapter selon votre stratégie de hashage (BCrypt, PBKDF2, plain…).
+     * Exemple minimal : comparaison plain ou BCrypt.
+     */
+    private boolean verifierMotDePasse(String saisi, String stocke) {
+        if (stocke == null) return false;
+        // Si BCrypt : return BCrypt.checkpw(saisi, stocke);
+        // Sinon (MD5 / SHA / plain) :
+        return stocke.equals(saisi) || stocke.equals(org.mindrot.jbcrypt.BCrypt.hashpw(saisi, stocke));
+    }
+
+    /**
+     * Hashage du nouveau mot de passe.
+     * Remplacez par votre propre stratégie si différente.
+     */
+    private String hasherMotDePasse(String clair) {
+        // BCrypt recommandé :
+        return org.mindrot.jbcrypt.BCrypt.hashpw(clair, org.mindrot.jbcrypt.BCrypt.gensalt(12));
+        // Si plain/MD5 : return DigestUtils.md5Hex(clair);
+    }
+
+    // ═══════════════════════════════════════════════
+    //  Edition profil helpers
+    // ═══════════════════════════════════════════════
+    public void activerEdition() {
+        telephone         = authBean.getUtilisateurConnecte().getTelephone();
+        adresse           = membre != null ? membre.getAdresse() : "";
+        modeEditionProfil = true;
+    }
     public void annulerEdition() { modeEditionProfil = false; }
 
-    private void addInfo(String m)  { FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,  m, null)); }
-    private void addError(String m) { FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, m, null)); }
+    // ═══════════════════════════════════════════════
+    //  HELPERS FACES MESSAGES
+    // ═══════════════════════════════════════════════
+    private void addInfo(String msg) {
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, msg, null));
+    }
+    private void addError(String msg) {
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, null));
+    }
 
+    // ═══════════════════════════════════════════════
+    //  HELPERS CALCUL
+    // ═══════════════════════════════════════════════
     public String getTypeAbonnementLabel() {
         if (abonnementActif == null) return "Aucun";
         return switch (abonnementActif.getType()) {
@@ -302,7 +416,7 @@ public class MembreDashboardBean implements Serializable {
             if (seance == null) return false;
             long n = s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.seance.id = :sid " +
-                                    "AND r.statutReservation <> :ann", Long.class)
+                            "AND r.statutReservation <> :ann", Long.class)
                     .setParameter("sid", seanceId)
                     .setParameter("ann", Reservation.Statut.annulee).uniqueResult();
             return n < seance.getCapaciteMaximale();
@@ -314,32 +428,45 @@ public class MembreDashboardBean implements Serializable {
         try (Session s = HibernateUtil.getSessionFactory().openSession()) {
             return s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.seance.id = :sid " +
-                                    "AND r.statutReservation <> :ann", Long.class)
+                            "AND r.statutReservation <> :ann", Long.class)
                     .setParameter("sid", seanceId)
                     .setParameter("ann", Reservation.Statut.annulee).uniqueResult();
         }
     }
 
-    // Getters / Setters
-    public Membre     getMembre()                        { return membre; }
-    public Abonnement getAbonnementActif()               { return abonnementActif; }
+    // ═══════════════════════════════════════════════
+    //  GETTERS / SETTERS
+    // ═══════════════════════════════════════════════
+    public Membre     getMembre()               { return membre; }
+    public Abonnement getAbonnementActif()       { return abonnementActif; }
+
     public List<Reservation> getReservationsAvenir()     { return reservationsAvenir     != null ? reservationsAvenir     : Collections.emptyList(); }
     public List<Reservation> getReservationsHistorique() { return reservationsHistorique != null ? reservationsHistorique : Collections.emptyList(); }
     public List<Seance>      getSeancesDisponibles()     { return seancesDisponibles     != null ? seancesDisponibles     : Collections.emptyList(); }
-    public List<Abonnement>  getHistoriquesAbonnements() { return historiquesAbonnements  != null ? historiquesAbonnements  : Collections.emptyList(); }
-    public long   getSeancesCeMois()                     { return seancesCeMois; }
-    public long   getTotalPresences()                    { return totalPresences; }
-    public int    getS1()                                { return s1; }
-    public int    getS2()                                { return s2; }
-    public int    getS3()                                { return s3; }
-    public int    getS4()                                { return s4; }
-    public String getTelephone()                         { return telephone; }
-    public void   setTelephone(String t)                 { this.telephone = t; }
-    public String getAdresse()                           { return adresse; }
-    public void   setAdresse(String a)                   { this.adresse = a; }
-    public boolean isModeEditionProfil()                 { return modeEditionProfil; }
-    public Integer getReservationAannuler()              { return reservationAannuler; }
-    public void    setReservationAannuler(Integer i)     { this.reservationAannuler = i; }
-    public Integer getSeanceAInscrire()                  { return seanceAInscrire; }
-    public void    setSeanceAInscrire(Integer i)         { this.seanceAInscrire = i; }
+    public List<Abonnement>  getHistoriquesAbonnements() { return historiquesAbonnements != null ? historiquesAbonnements : Collections.emptyList(); }
+
+    public long getSeancesCeMois()  { return seancesCeMois; }
+    public long getTotalPresences() { return totalPresences; }
+    public int  getS1() { return s1; }
+    public int  getS2() { return s2; }
+    public int  getS3() { return s3; }
+    public int  getS4() { return s4; }
+
+    public String  getTelephone()              { return telephone; }
+    public void    setTelephone(String t)      { this.telephone = t; }
+    public String  getAdresse()                { return adresse; }
+    public void    setAdresse(String a)        { this.adresse = a; }
+    public boolean isModeEditionProfil()       { return modeEditionProfil; }
+
+    public String getAncienMotDePasse()               { return ancienMotDePasse; }
+    public void   setAncienMotDePasse(String v)       { this.ancienMotDePasse = v; }
+    public String getNouveauMotDePasse()              { return nouveauMotDePasse; }
+    public void   setNouveauMotDePasse(String v)      { this.nouveauMotDePasse = v; }
+    public String getConfirmationMotDePasse()         { return confirmationMotDePasse; }
+    public void   setConfirmationMotDePasse(String v) { this.confirmationMotDePasse = v; }
+
+    public Integer getReservationAannuler()          { return reservationAannuler; }
+    public void    setReservationAannuler(Integer i) { this.reservationAannuler = i; }
+    public Integer getSeanceAInscrire()              { return seanceAInscrire; }
+    public void    setSeanceAInscrire(Integer i)     { this.seanceAInscrire = i; }
 }

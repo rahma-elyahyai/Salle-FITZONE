@@ -1,0 +1,228 @@
+<!-- ══════════════════════════════════
+     SECTION : ABONNEMENTS — CRUD
+     READ   : abonnement actif + historique
+     VIEW   : détail complet de chaque abonnement
+══════════════════════════════════ -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+<div class="fz-section" id="section-abonnements">
+<style>
+/* ── ABO ACTIVE HERO ── */
+.fz-abo-hero {
+    background: var(--card);
+    border: 1px solid rgba(249,115,22,.25);
+    border-radius: var(--radius);
+    padding: 28px 30px;
+    margin-bottom: 22px;
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; gap: 32px;
+}
+.fz-abo-hero::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+}
+.fz-abo-hero::after {
+    content: 'ACTIF';
+    position: absolute; right: 24px; top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-disp);
+    font-size: 72px; letter-spacing: 8px;
+    color: rgba(249,115,22,.06);
+    pointer-events: none; line-height: 1;
+}
+.fz-abo-hero-left { flex: 1; }
+.fz-abo-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3);
+    border-radius: 20px; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px; color: var(--green);
+    margin-bottom: 10px;
+}
+.fz-abo-tag.expired { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: var(--red); }
+.fz-abo-name {
+    font-family: var(--font-disp);
+    font-size: 32px; letter-spacing: 2px; color: var(--text);
+    margin-bottom: 8px; line-height: 1;
+}
+.fz-abo-dates { font-size: 13px; color: var(--muted2); display: flex; align-items: center; gap: 10px; }
+.fz-abo-dates svg { width: 14px; height: 14px; fill: none; stroke: var(--muted); stroke-width: 2; }
+
+.fz-abo-progress-wrap { width: 220px; flex-shrink: 0; }
+.fz-abo-progress-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: var(--muted); }
+.fz-abo-progress-label span:last-child { font-family: var(--font-mono); color: var(--accent); font-size: 14px; }
+
+.fz-abo-price-col { text-align: right; flex-shrink: 0; }
+.fz-abo-price-val {
+    font-family: var(--font-disp); font-size: 36px; color: var(--accent); line-height: 1;
+}
+.fz-abo-price-per { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+
+/* Stats row */
+.fz-abo-stats-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin-bottom: 22px;
+}
+.fz-abo-stat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 6px;
+}
+.fz-abo-stat-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.fz-abo-stat-val { font-family: var(--font-mono); font-size: 26px; color: var(--text); }
+.fz-abo-stat-sub { font-size: 11.5px; color: var(--muted); }
+</style>
+
+    <!-- Header -->
+    <div class="fz-section-header">
+        <div class="fz-section-eyebrow"><span>Facturation</span></div>
+        <div class="fz-section-title">MES <span>ABONNEMENTS</span></div>
+    </div>
+
+    <!-- ── ABONNEMENT ACTIF ── -->
+    <h:panelGroup rendered="#{membreBean.abonnementActif != null}" layout="block">
+        <div class="fz-abo-hero">
+            <div class="fz-abo-hero-left">
+                <div class="fz-abo-tag">Actif</div>
+                <div class="fz-abo-name"><h:outputText value="#{membreBean.typeAbonnementLabel}"/></div>
+                <div class="fz-abo-dates">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <h:outputText value="#{membreBean.abonnementActif.dateDebut}">
+                        <f:convertDateTime pattern="dd MMMM yyyy" type="localDate" locale="fr"/>
+                    </h:outputText>
+                    &#160;→&#160;
+                    <h:outputText value="#{membreBean.abonnementActif.dateFin}">
+                        <f:convertDateTime pattern="dd MMMM yyyy" type="localDate" locale="fr"/>
+                    </h:outputText>
+                </div>
+            </div>
+
+            <div class="fz-abo-progress-wrap">
+                <div class="fz-abo-progress-label">
+                    <span>Progression</span>
+                    <span><h:outputText value="#{membreBean.progressionAbonnement}"/>%</span>
+                </div>
+                <div class="fz-abo-progress-bar">
+                    <div class="fz-abo-progress-fill" style="width:#{membreBean.progressionAbonnement}%"/>
+                </div>
+                <div style="margin-top:6px;font-size:11px;color:var(--muted);text-align:right;">
+                    <span style="color:var(--green);font-weight:700;">
+                        <h:outputText value="#{membreBean.joursRestants}"/> jours restants
+                    </span>
+                </div>
+            </div>
+
+            <div class="fz-abo-price-col">
+                <div class="fz-abo-price-val">
+                    <h:outputText value="#{membreBean.abonnementActif.prix}">
+                        <f:convertNumber maxFractionDigits="0"/>
+                    </h:outputText>
+                </div>
+                <div class="fz-abo-price-per">DH / abonnement</div>
+            </div>
+        </div>
+
+        <!-- Stats rapides -->
+        <div class="fz-abo-stats-row">
+            <div class="fz-abo-stat-card">
+                <div class="fz-abo-stat-label">Séances ce mois</div>
+                <div class="fz-abo-stat-val"><h:outputText value="#{membreBean.seancesCeMois}"/></div>
+                <div class="fz-abo-stat-sub">Séances réservées</div>
+            </div>
+            <div class="fz-abo-stat-card">
+                <div class="fz-abo-stat-label">Présences totales</div>
+                <div class="fz-abo-stat-val"><h:outputText value="#{membreBean.totalPresences}"/></div>
+                <div class="fz-abo-stat-sub">Depuis l'inscription</div>
+            </div>
+            <div class="fz-abo-stat-card">
+                <div class="fz-abo-stat-label">Jours restants</div>
+                <div class="fz-abo-stat-val" style="color:var(--accent);">
+                    <h:outputText value="#{membreBean.joursRestants}"/>
+                </div>
+                <div class="fz-abo-stat-sub">
+                    Expire le
+                    <h:outputText value="#{membreBean.abonnementActif.dateFin}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                    </h:outputText>
+                </div>
+            </div>
+        </div>
+    </h:panelGroup>
+
+    <h:panelGroup rendered="#{membreBean.abonnementActif == null}" layout="block">
+        <div class="fz-empty" style="margin-bottom:22px;">
+            <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <div class="fz-empty-title">Aucun abonnement actif</div>
+            <div class="fz-empty-sub">Contactez l'accueil pour souscrire à un abonnement.</div>
+        </div>
+    </h:panelGroup>
+
+    <!-- ── HISTORIQUE TABLE ── -->
+    <div class="fz-table-wrap">
+        <div class="fz-table-header">
+            Historique des abonnements
+        </div>
+        <h:panelGroup rendered="#{not empty membreBean.historiquesAbonnements}" layout="block">
+            <table class="fz-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Type</th>
+                        <th>Début</th>
+                        <th>Fin</th>
+                        <th>Durée</th>
+                        <th>Prix</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ui:repeat value="#{membreBean.historiquesAbonnements}" var="abo" varStatus="st">
+                        <tr>
+                            <td style="font-family:var(--font-mono);color:var(--muted);font-size:12px;">
+                                <h:outputText value="#{st.index + 1}"/>
+                            </td>
+                            <td style="font-weight:600;">
+                                <h:outputText value="#{abo.type == 'mensuel' ? '📅 Mensuel' : abo.type == 'annuel' ? '📆 Annuel' : '🎫 Séance unique'}"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{abo.dateDebut}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                                </h:outputText>
+                            </td>
+                            <td>
+                                <h:outputText value="#{abo.dateFin}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                                </h:outputText>
+                            </td>
+                            <td style="color:var(--muted2);">
+                                <h:outputText value="#{abo.type == 'mensuel' ? '30 j' : abo.type == 'annuel' ? '365 j' : '1 j'}"/>
+                            </td>
+                            <td style="font-family:var(--font-mono);color:var(--accent);">
+                                <h:outputText value="#{abo.prix}">
+                                    <f:convertNumber maxFractionDigits="2"/>
+                                </h:outputText>&#160;DH
+                            </td>
+                            <td>
+                                <span class="fz-badge #{abo.statut == 'actif' ? 'fz-badge-green' : abo.statut == 'expire' ? 'fz-badge-gray' : 'fz-badge-orange'}">
+                                    <h:outputText value="#{abo.statut == 'actif' ? 'Actif' : abo.statut == 'expire' ? 'Expiré' : 'Renouvelé'}"/>
+                                </span>
+                            </td>
+                        </tr>
+                    </ui:repeat>
+                </tbody>
+            </table>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{empty membreBean.historiquesAbonnements}" layout="block">
+            <div class="fz-empty" style="padding:36px;border:none;">
+                <div class="fz-empty-sub">Aucun historique d'abonnement.</div>
+            </div>
+        </h:panelGroup>
+    </div>
+
+</div><!-- /section-abonnements -->
+</ui:composition>

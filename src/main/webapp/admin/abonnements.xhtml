@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FITZONE — Abonnements</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+    <h:outputStylesheet name="css/dashboard-admin.css"/>
+    <style>
+        .fz-add-panel { display:none; }
+        .fz-add-panel.open { display:block; }
+        .fz-panel-abo .fz-panel-header { border-left:3px solid var(--green); }
+        .fz-panel-abo .fz-panel-title svg { stroke:var(--green-lt); }
+        .fz-panel-abo .fz-input:focus,
+        .fz-panel-abo .fz-select:focus { border-color:rgba(34,197,94,.4); background:rgba(34,197,94,.05); box-shadow:0 0 0 3px rgba(34,197,94,.1); }
+
+        /* Résumé stats abonnements */
+        .fz-abo-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px; }
+        .fz-abo-stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 20px; }
+        .fz-abo-stat-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+        .fz-abo-stat-val { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:1px; }
+    </style>
+</h:head>
+
+<h:body>
+<!-- MODAL SUPPRESSION ABONNEMENT -->
+<div class="fz-overlay" id="modalSuppAbo">
+    <div class="fz-modal">
+        <div class="fz-modal-icon danger">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </div>
+        <div class="fz-modal-title">RÉVOQUER CET ABONNEMENT ?</div>
+        <div class="fz-modal-sub">L'abonnement sera définitivement supprimé. Le membre n'aura plus accès aux services liés à cet abonnement.</div>
+        <div class="fz-modal-actions">
+            <button type="button" class="fz-btn fz-btn-ghost fz-btn-sm" onclick="closeModal('modalSuppAbo')">Annuler</button>
+            <h:form id="formSuppAbo">
+                <h:inputHidden value="#{adminBean.idASupprimer}"/>
+                <h:commandButton value="Révoquer l'abonnement"
+                                 action="#{adminBean.supprimerAbonnement}"
+                                 styleClass="fz-btn fz-btn-sm"
+                                 style="background:var(--red);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;padding:9px 18px;border:none;border-radius:var(--radius);cursor:pointer;"/>
+            </h:form>
+        </div>
+    </div>
+</div>
+
+<div class="fz-shell">
+    <!-- SIDEBAR -->
+    <aside class="fz-sidebar">
+        <div class="fz-sidebar-logo">
+            <h:graphicImage library="images" name="logo.png" alt="FITZONE" style="width:36px;height:36px;object-fit:contain;mix-blend-mode:lighten;"/>
+            <div>
+                <div class="fz-sidebar-logo-text">FITZONE</div>
+                <div class="fz-sidebar-logo-sub">Administration</div>
+            </div>
+        </div>
+        <div class="fz-user-card">
+            <div class="fz-avatar fz-avatar-admin"><h:outputText value="#{authBean.initiales}"/></div>
+            <div>
+                <div class="fz-user-name"><h:outputText value="#{authBean.utilisateurConnecte.prenom} #{authBean.utilisateurConnecte.nom}"/></div>
+                <div class="fz-user-role fz-role-admin">Administrateur</div>
+            </div>
+        </div>
+        <nav class="fz-nav">
+            <div class="fz-nav-section">Navigation</div>
+            <h:outputLink value="dashboard.xhtml" styleClass="fz-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+                Tableau de bord
+            </h:outputLink>
+            <h:outputLink value="membres.xhtml" styleClass="fz-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                Membres
+            </h:outputLink>
+            <h:outputLink value="coachs.xhtml" styleClass="fz-nav-item">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+                Coachs
+            </h:outputLink>
+            <h:outputLink value="seances.xhtml" styleClass="fz-nav-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Séances
+            </h:outputLink>
+            <div class="fz-nav-item active">
+                <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Abonnements
+            </div>
+        </nav>
+        <div class="fz-sidebar-footer">
+            <h:form><h:commandButton action="#{authBean.logout}" styleClass="fz-logout-btn" value="Déconnexion"/></h:form>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="fz-main">
+        <div class="fz-topbar">
+            <div class="fz-topbar-title">Admin <span>Abonnements</span></div>
+            <div class="fz-topbar-right">
+                <div class="fz-topbar-date" id="topbarDate"></div>
+                <div class="fz-topbar-dot"></div>
+                <div class="fz-user-card-top">
+                    <div class="fz-avatar fz-avatar-admin" style="width:30px;height:30px;font-size:12px"><h:outputText value="#{authBean.initiales}"/></div>
+                    <div class="fz-user-name" style="font-size:12px"><h:outputText value="#{authBean.utilisateurConnecte.prenom}"/></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fz-global-messages">
+            <h:messages globalOnly="false" styleClass="fz-messages" infoClass="fz-msg-info" errorClass="fz-msg-error"/>
+        </div>
+
+        <div class="fz-content">
+            <div class="fz-section-header">
+                <div class="fz-section-header-left">
+                    <div class="fz-section-eyebrow fz-eyebrow-green"><span>Gestion</span></div>
+                    <div class="fz-section-title">GESTION DES <span class="green">ABONNEMENTS</span></div>
+                </div>
+                <button type="button" class="fz-btn fz-btn-green" onclick="toggleAddPanel()" id="btnToggleAbo">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Assigner un abonnement
+                </button>
+            </div>
+
+            <!-- STATS RAPIDES -->
+            <div class="fz-abo-stats">
+                <div class="fz-abo-stat-card">
+                    <div class="fz-abo-stat-label">Abonnements actifs</div>
+                    <div class="fz-abo-stat-val" style="color:var(--green-lt)"><h:outputText value="#{adminBean.nbAbonnementsActifs}"/></div>
+                </div>
+                <div class="fz-abo-stat-card">
+                    <div class="fz-abo-stat-label">Total abonnements</div>
+                    <div class="fz-abo-stat-val" style="color:var(--text)"><h:outputText value="#{adminBean.tousAbonnements.size()}"/></div>
+                </div>
+                <div class="fz-abo-stat-card">
+                    <div class="fz-abo-stat-label">Membres abonnés</div>
+                    <div class="fz-abo-stat-val" style="color:var(--purple-lt)"><h:outputText value="#{adminBean.nbAbonnementsActifs}"/></div>
+                </div>
+            </div>
+
+            <!-- PANEL ASSIGNATION -->
+            <div class="fz-panel fz-panel-abo fz-add-panel" id="panelAbo">
+                <div class="fz-panel-header">
+                    <div class="fz-panel-title">
+                        <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        Assigner un abonnement à un membre
+                    </div>
+                    <button type="button" onclick="toggleAddPanel()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;">✕</button>
+                </div>
+                <div class="fz-panel-body">
+                    <h:form id="formAbo" styleClass="fz-grid-form">
+                        <div class="fz-form-row">
+                            <div class="fz-form-field fz-field-2">
+                                <label>Membre <span style="color:var(--orange-lt)">*</span></label>
+                                <h:selectOneMenu value="#{adminBean.aboMembreId}" styleClass="fz-select">
+                                    <f:selectItem itemValue="" itemLabel="— Sélectionner un membre —"/>
+                                    <f:selectItems value="#{adminBean.tousMembers}" var="m"
+                                                   itemValue="#{m.id}"
+                                                   itemLabel="#{m.prenom} #{m.nom} (#{m.email})"/>
+                                </h:selectOneMenu>
+                            </div>
+                            <div class="fz-form-field">
+                                <label>Type d'abonnement <span style="color:var(--orange-lt)">*</span></label>
+                                <h:selectOneMenu value="#{adminBean.aboType}" styleClass="fz-select">
+                                    <f:selectItem itemValue=""              itemLabel="— Type —"/>
+                                    <f:selectItem itemValue="mensuel"       itemLabel="🗓 Mensuel"/>
+                                    <f:selectItem itemValue="annuel"        itemLabel="📆 Annuel"/>
+                                    <f:selectItem itemValue="seance_unique" itemLabel="🎟 Séance unique"/>
+                                </h:selectOneMenu>
+                            </div>
+                            <div class="fz-form-field">
+                                <label>Date de début <span style="color:var(--orange-lt)">*</span></label>
+                                <h:inputText value="#{adminBean.aboDateDebut}" styleClass="fz-input"
+                                             placeholder="JJ/MM/AAAA">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                                </h:inputText>
+                            </div>
+                            <div class="fz-form-field">
+                                <label>Date de fin <span style="color:var(--orange-lt)">*</span></label>
+                                <h:inputText value="#{adminBean.aboDateFin}" styleClass="fz-input"
+                                             placeholder="JJ/MM/AAAA">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                                </h:inputText>
+                            </div>
+                            <div class="fz-form-field">
+                                <label>Prix (DH) <span style="color:var(--orange-lt)">*</span></label>
+                                <h:inputText value="#{adminBean.aboPrix}" styleClass="fz-input" placeholder="Ex: 350"/>
+                            </div>
+                        </div>
+                        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-size:12px;color:var(--muted);line-height:1.7;">
+                            ℹ️ Si le membre possède déjà un abonnement actif, il sera automatiquement marqué comme <strong style="color:var(--text)">renouvelé</strong> et remplacé par le nouvel abonnement.
+                        </div>
+                        <div class="fz-form-actions">
+                            <h:commandButton value="Assigner l'abonnement" action="#{adminBean.assignerAbonnement}"
+                                             styleClass="fz-btn fz-btn-green"/>
+                            <button type="button" class="fz-btn fz-btn-ghost" onclick="toggleAddPanel()">Annuler</button>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+
+            <!-- FILTRES -->
+            <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+                <button class="fz-btn fz-btn-ghost fz-btn-sm filter-btn act" onclick="filterAbo('all',this)">Tous</button>
+                <button class="fz-btn fz-btn-ghost fz-btn-sm filter-btn" onclick="filterAbo('actif',this)">Actifs</button>
+                <button class="fz-btn fz-btn-ghost fz-btn-sm filter-btn" onclick="filterAbo('expire',this)">Expirés</button>
+                <button class="fz-btn fz-btn-ghost fz-btn-sm filter-btn" onclick="filterAbo('renouvele',this)">Renouvelés</button>
+                <div style="margin-left:auto">
+                    <input type="text" class="fz-input" style="width:200px;padding:7px 12px;font-size:12px;"
+                           placeholder="🔍  Rechercher un membre…" oninput="filterTable('tableAbo',this.value)"/>
+                </div>
+            </div>
+
+            <!-- TABLE ABONNEMENTS -->
+            <div class="fz-table-wrap">
+                <div class="fz-table-header">
+                    <div class="fz-table-header-left">Tous les abonnements</div>
+                </div>
+                <h:panelGroup rendered="#{not empty adminBean.tousAbonnements}" layout="block">
+                    <table class="fz-table" id="tableAbo">
+                        <thead>
+                            <tr>
+                                <th>Membre</th>
+                                <th>Type</th>
+                                <th>Début</th>
+                                <th>Fin</th>
+                                <th>Prix</th>
+                                <th>Statut</th>
+                                <th style="text-align:right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ui:repeat value="#{adminBean.tousAbonnements}" var="a">
+                                <tr data-statut="#{a.statut.name()}">
+                                    <td>
+                                        <div class="fz-table-user">
+                                            <div class="fz-mini-avatar fz-mini-purple">
+                                                <h:outputText value="#{a.membre.utilisateur.initiales}"/>
+                                            </div>
+                                            <div>
+                                                <div style="font-weight:500"><h:outputText value="#{a.membre.utilisateur.prenom} #{a.membre.utilisateur.nom}"/></div>
+                                                <div style="font-size:11px;color:var(--muted)"><h:outputText value="#{a.membre.utilisateur.email}"/></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fz-badge #{a.type.name() == 'mensuel' ? 'fz-badge-blue' : a.type.name() == 'annuel' ? 'fz-badge-purple' : 'fz-badge-gray'}">
+                                            <h:outputText value="#{a.type.name() == 'mensuel' ? 'Mensuel' : a.type.name() == 'annuel' ? 'Annuel' : 'Séance unique'}"/>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{a.dateDebut}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{a.dateFin}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td style="font-weight:500;color:var(--green-lt)">
+                                        <h:outputText value="#{a.prix}">
+                                            <f:convertNumber maxFractionDigits="0"/>
+                                        </h:outputText> DH
+                                    </td>
+                                    <td>
+                                        <span class="fz-badge #{a.statut.name() == 'actif' ? 'fz-badge-green' : a.statut.name() == 'renouvele' ? 'fz-badge-blue' : 'fz-badge-gray'}">
+                                            <h:outputText value="#{a.statut.name() == 'actif' ? 'Actif' : a.statut.name() == 'expire' ? 'Expiré' : 'Renouvelé'}"/>
+                                        </span>
+                                    </td>
+                                    <td style="text-align:right">
+                                        <button type="button"
+                                                class="fz-btn-danger-soft fz-btn-xs"
+                                                style="border-radius:6px;padding:5px 10px;"
+                                                onclick="openDeleteModal('modalSuppAbo','#{a.id}')">
+                                            Révoquer
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{empty adminBean.tousAbonnements}" layout="block">
+                    <div class="fz-empty">
+                        <div class="fz-empty-icon">💳</div>
+                        <div class="fz-empty-title">AUCUN ABONNEMENT</div>
+                        <div class="fz-empty-sub">Assignez un abonnement à un membre avec le bouton ci-dessus.</div>
+                    </div>
+                </h:panelGroup>
+            </div>
+        </div>
+    </main>
+</div>
+
+<h:outputScript>
+//<![CDATA[
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function openDeleteModal(modalId, aboId){
+    var form = document.getElementById('formSuppAbo');
+    var hidden = form.querySelector('input[type="hidden"]');
+    if(hidden){ hidden.value = aboId; }
+    openModal(modalId);
+}
+document.getElementById('modalSuppAbo').addEventListener('click', function(e){
+    if(e.target === this) closeModal('modalSuppAbo');
+});
+
+function toggleAddPanel(){
+    var panel = document.getElementById('panelAbo');
+    var btn = document.getElementById('btnToggleAbo');
+    var open = panel.classList.toggle('open');
+    btn.innerHTML = open
+        ? '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Fermer'
+        : '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Assigner un abonnement';
+    if(open) panel.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function filterTable(tableId, query){
+    var rows = document.getElementById(tableId).querySelectorAll('tbody tr');
+    var q = query.toLowerCase().trim();
+    rows.forEach(function(row){
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+function filterAbo(statut, btn){
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.style.borderColor=''; b.style.color=''; });
+    btn.style.borderColor='var(--green-ring)'; btn.style.color='var(--green-lt)';
+    var rows = document.querySelectorAll('#tableAbo tbody tr');
+    rows.forEach(function(row){
+        row.style.display = (statut==='all' || row.getAttribute('data-statut')===statut) ? '' : 'none';
+    });
+}
+
+(function(){
+    var days=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    var months=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    var d=new Date();
+    document.getElementById('topbarDate').textContent=days[d.getDay()]+' '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
+})();
+//]]>
+</h:outputScript>
+</h:body>
+</html>

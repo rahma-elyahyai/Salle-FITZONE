@@ -47,7 +47,7 @@ public class AuthService {
     public String redirectUrl(Role role) {
         return switch (role) {
             case COACH  -> "/coach/dashboard.xhtml?faces-redirect=true";
-            case MEMBRE -> "/membre/dashboard.xhtml?faces-redirect=true";
+            case MEMBRE -> "/membre/membre-dashboard.xhtml?faces-redirect=true";
             case ADMIN -> "/admin/dashboard.xhtml?faces-redirect=true";
         };
     }

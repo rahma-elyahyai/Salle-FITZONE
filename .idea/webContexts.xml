@@ -4,6 +4,7 @@
     <option name="state">
       <map>
         <entry key="file://$PROJECT_DIR$/src/main/webapp/membre/dashboard.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/membre" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/membre/membre-dashboard.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/membre" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/register.xhtml" value="file://$PROJECT_DIR$/src/main/webapp" />
       </map>
     </option>

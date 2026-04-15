@@ -1,0 +1,298 @@
+<!-- ══════════════════════════════════
+     SECTION : S'INSCRIRE — CRUD complet
+     READ    : voir séances disponibles
+     CREATE  : s'inscrire à une séance
+     FILTER  : filtrer par catégorie, recherche, disponibilité
+══════════════════════════════════ -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+<div class="fz-section" id="section-planning">
+<style>
+/* ── PLANNING TOOLBAR ── */
+.fz-planning-toolbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 22px; flex-wrap: wrap;
+}
+.fz-planning-toolbar .fz-filter-chip { /* reuse from seances */ }
+
+/* ── PLANNING CARDS ── */
+.fz-planning-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 16px;
+}
+.fz-planning-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.fz-planning-card:hover {
+    border-color: rgba(249,115,22,.3);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,.3);
+}
+.fz-planning-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.fz-planning-cat {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted2);
+    background: rgba(255,255,255,.05);
+    padding: 4px 10px; border-radius: 20px;
+}
+.fz-planning-title {
+    font-size: 16px; font-weight: 700; color: var(--text);
+    padding: 14px 18px 10px;
+}
+.fz-planning-infos {
+    padding: 0 18px 14px;
+    display: flex; flex-direction: column; gap: 7px;
+    flex: 1;
+}
+.fz-planning-info-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12.5px; color: var(--muted2);
+}
+.fz-planning-info-item svg { width: 13px; height: 13px; fill: none; stroke: var(--muted); stroke-width: 2; flex-shrink: 0; }
+
+/* Jauge places */
+.fz-planning-places { padding: 0 18px 14px; }
+.fz-planning-places-label {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--muted); margin-bottom: 6px;
+}
+.fz-planning-places-bar { background: rgba(255,255,255,.06); border-radius: 99px; height: 6px; overflow: hidden; }
+.fz-planning-places-fill { height: 100%; border-radius: 99px; transition: width .8s ease; }
+.fill-green { background: linear-gradient(90deg, var(--green), #16a34a); }
+.fill-red   { background: linear-gradient(90deg, var(--red),   #b91c1c); }
+.fill-warn  { background: linear-gradient(90deg, var(--accent), #c2410c); }
+
+/* Btn inscrire */
+.fz-btn-inscrire {
+    display: block;
+    width: calc(100% - 36px);
+    margin: 0 18px 16px;
+    padding: 11px;
+    background: linear-gradient(135deg, var(--accent), #c2410c);
+    color: #fff;
+    font-size: 13px; font-weight: 700;
+    font-family: var(--font-sans);
+    border: none; border-radius: var(--radius-sm);
+    cursor: pointer; transition: all .2s; letter-spacing: .5px;
+    text-transform: uppercase;
+}
+.fz-btn-inscrire:hover { filter: brightness(1.1); box-shadow: var(--glow); }
+.fz-btn-inscrire:disabled {
+    background: rgba(255,255,255,.08);
+    color: var(--muted); cursor: not-allowed; filter: none; box-shadow: none;
+}
+
+/* WARNING abo */
+.fz-planning-warning {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 18px 22px;
+    background: rgba(239,68,68,.07); border: 1px solid rgba(239,68,68,.2);
+    border-radius: var(--radius); margin-bottom: 22px;
+}
+.fz-planning-warning svg { width: 22px; height: 22px; fill: none; stroke: #ef4444; stroke-width: 2; flex-shrink: 0; margin-top: 2px; }
+.fz-planning-warning-title { font-size: 14px; font-weight: 700; color: #ef4444; margin-bottom: 3px; }
+.fz-planning-warning-sub { font-size: 12.5px; color: var(--muted2); }
+
+/* COMPTEUR résultats */
+.fz-results-count {
+    font-size: 11px; color: var(--muted);
+    font-weight: 600; letter-spacing: 1px;
+    margin-left: auto;
+    font-family: var(--font-mono);
+}
+
+/* Color accent per categorie (top strip) */
+.fz-planning-card[data-cat="yoga"]::before    { content:''; display:block; height:3px; background: linear-gradient(90deg,#8b5cf6,transparent); }
+.fz-planning-card[data-cat="cardio"]::before  { content:''; display:block; height:3px; background: linear-gradient(90deg,#ef4444,transparent); }
+.fz-planning-card[data-cat="muscu"]::before   { content:''; display:block; height:3px; background: linear-gradient(90deg,#f97316,transparent); }
+.fz-planning-card[data-cat="pilates"]::before { content:''; display:block; height:3px; background: linear-gradient(90deg,#06b6d4,transparent); }
+.fz-planning-card::before                     { content:''; display:block; height:3px; background: linear-gradient(90deg,var(--accent),transparent); }
+</style>
+
+    <!-- Messages JSF -->
+    <h:messages globalOnly="false" styleClass="fz-messages"
+                infoClass="fz-msg-info" errorClass="fz-msg-error"/>
+
+    <!-- Header -->
+    <div class="fz-section-header">
+        <div class="fz-section-eyebrow"><span>Inscription</span></div>
+        <div class="fz-section-title">SÉANCES <span>DISPONIBLES</span></div>
+    </div>
+
+    <!-- Warning si pas d'abonnement -->
+    <h:panelGroup rendered="#{membreBean.abonnementActif == null}" layout="block">
+        <div class="fz-planning-warning">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>
+                <div class="fz-planning-warning-title">Abonnement requis</div>
+                <div class="fz-planning-warning-sub">Vous devez avoir un abonnement actif pour vous inscrire à une séance. Contactez l'accueil.</div>
+            </div>
+        </div>
+    </h:panelGroup>
+
+    <!-- ── BARRE DE FILTRES ── -->
+    <div class="fz-planning-toolbar" id="planning-toolbar">
+        <button class="fz-filter-chip active" onclick="filterPlanning('all',this)">Toutes</button>
+        <button class="fz-filter-chip" onclick="filterPlanning('yoga',this)">🧘 Yoga</button>
+        <button class="fz-filter-chip" onclick="filterPlanning('cardio',this)">🏃 Cardio</button>
+        <button class="fz-filter-chip" onclick="filterPlanning('muscu',this)">🏋️ Muscu</button>
+        <button class="fz-filter-chip" onclick="filterPlanning('pilates',this)">🤸 Pilates</button>
+        <button class="fz-filter-chip" id="chip-dispo" onclick="filterDispo(this)">✔ Places dispo</button>
+        <div class="fz-filter-search">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Rechercher…" oninput="searchPlanning(this.value)"/>
+        </div>
+        <span class="fz-results-count" id="planning-count"></span>
+    </div>
+
+    <!-- ── GRILLE SÉANCES DISPONIBLES ── -->
+    <h:panelGroup rendered="#{not empty membreBean.seancesDisponibles}" layout="block">
+        <div class="fz-planning-grid" id="grid-planning">
+            <ui:repeat value="#{membreBean.seancesDisponibles}" var="s">
+                <div class="fz-planning-card"
+                     data-cat="#{s.categorie}"
+                     data-titre="#{s.titre}"
+                     data-dispo="#{membreBean.placesDisponibles(s.id) ? '1' : '0'}">
+
+                    <div class="fz-planning-header">
+                        <span class="fz-planning-cat"><h:outputText value="#{s.categorie}"/></span>
+                        <span class="fz-badge #{membreBean.placesDisponibles(s.id) ? 'fz-badge-green' : 'fz-badge-red'}">
+                            <h:outputText value="#{membreBean.placesDisponibles(s.id) ? 'Places dispo' : 'Complet'}"/>
+                        </span>
+                    </div>
+
+                    <div class="fz-planning-title">
+                        <h:outputText value="#{s.titre}"/>
+                    </div>
+
+                    <div class="fz-planning-infos">
+                        <div class="fz-planning-info-item">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            <h:outputText value="#{s.dateHeure}">
+                                <f:convertDateTime pattern="EEE dd MMM yyyy" type="localDateTime" locale="fr"/>
+                            </h:outputText>
+                        </div>
+                        <div class="fz-planning-info-item">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+                            <h:outputText value="#{s.dateHeure}">
+                                <f:convertDateTime pattern="HH:mm" type="localDateTime"/>
+                            </h:outputText>
+                            &#160;— <h:outputText value="#{s.duree}"/> min
+                        </div>
+                        <div class="fz-planning-info-item">
+                            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <h:outputText value="#{s.salle.nomSalle}"/>
+                        </div>
+                        <div class="fz-planning-info-item">
+                            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Coach&#160;<h:outputText value="#{s.coach.utilisateur.prenom}"/>
+                            &#160;<h:outputText value="#{s.coach.utilisateur.nom}"/>
+                        </div>
+                    </div>
+
+                    <!-- Jauge places -->
+                    <div class="fz-planning-places">
+                        <div class="fz-planning-places-label">
+                            <span>
+                                <h:outputText value="#{membreBean.getNbInscrits(s.id)}"/>
+                                &#160;/&#160;
+                                <h:outputText value="#{s.capaciteMaximale}"/>
+                                &#160;inscrits
+                            </span>
+                            <span style="color:#{membreBean.placesDisponibles(s.id) ? 'var(--green)' : 'var(--red)'};">
+                                <h:outputText value="#{s.capaciteMaximale - membreBean.getNbInscrits(s.id)}"/> place(s) libre(s)
+                            </span>
+                        </div>
+                        <div class="fz-planning-places-bar">
+                            <div class="fz-planning-places-fill
+                                #{membreBean.placesDisponibles(s.id) ? 'fill-green' : 'fill-red'}"
+                                 style="width:#{(membreBean.getNbInscrits(s.id) * 100) / s.capaciteMaximale}%"/>
+                        </div>
+                    </div>
+
+                    <!-- Bouton S'inscrire -->
+                    <h:form>
+                        <h:commandButton
+                            value="S'inscrire →"
+                            action="#{membreBean.inscrire}"
+                            styleClass="fz-btn-inscrire"
+                            disabled="#{!membreBean.placesDisponibles(s.id) or membreBean.abonnementActif == null}">
+                            <f:setPropertyActionListener
+                                target="#{membreBean.seanceAInscrire}"
+                                value="#{s.id}"/>
+                        </h:commandButton>
+                    </h:form>
+                </div>
+            </ui:repeat>
+        </div>
+    </h:panelGroup>
+
+    <h:panelGroup rendered="#{empty membreBean.seancesDisponibles}" layout="block">
+        <div class="fz-empty">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <div class="fz-empty-title">Aucune séance disponible</div>
+            <div class="fz-empty-sub">Vous êtes déjà inscrit(e) à toutes les séances planifiées, ou aucune n'est disponible pour le moment.</div>
+        </div>
+    </h:panelGroup>
+
+    <!-- ── JS FILTERING ── -->
+    <script>
+    //<![CDATA[
+    var _planningFilter = 'all';
+    var _planningDispo  = false;
+
+    function updatePlanningCount() {
+        var visible = document.querySelectorAll('#grid-planning .fz-planning-card:not([style*="display: none"]):not([style*="display:none"])').length;
+        var el = document.getElementById('planning-count');
+        if (el) el.textContent = visible + ' séance(s)';
+    }
+
+    function applyPlanningFilters() {
+        var search = (document.querySelector('#planning-toolbar .fz-filter-search input') || {}).value || '';
+        search = search.toLowerCase();
+        document.querySelectorAll('#grid-planning .fz-planning-card').forEach(function(c){
+            var cat   = (c.dataset.cat   || '').toLowerCase();
+            var titre = (c.dataset.titre || '').toLowerCase();
+            var dispo = c.dataset.dispo === '1';
+            var matchCat   = _planningFilter === 'all' || cat.includes(_planningFilter);
+            var matchDispo = !_planningDispo || dispo;
+            var matchSearch = !search || titre.includes(search) || cat.includes(search);
+            c.style.display = (matchCat && matchDispo && matchSearch) ? '' : 'none';
+        });
+        updatePlanningCount();
+    }
+
+    function filterPlanning(cat, btn) {
+        _planningFilter = cat;
+        document.querySelectorAll('#planning-toolbar .fz-filter-chip:not(#chip-dispo)').forEach(function(c){ c.classList.remove('active'); });
+        btn.classList.add('active');
+        applyPlanningFilters();
+    }
+    function filterDispo(btn) {
+        _planningDispo = !_planningDispo;
+        btn.classList.toggle('active', _planningDispo);
+        applyPlanningFilters();
+    }
+    function searchPlanning(val) { applyPlanningFilters(); }
+
+    // init count
+    document.addEventListener('DOMContentLoaded', updatePlanningCount);
+    //]]>
+    </script>
+
+</div><!-- /section-planning -->
+</ui:composition>
