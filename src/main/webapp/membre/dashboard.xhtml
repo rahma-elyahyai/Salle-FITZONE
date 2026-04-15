@@ -1,0 +1,1079 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      lang="fr">
+
+<h:head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FITZONE — Dashboard Membre</title>
+
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{
+            background:#0a0a0d;
+            color:#f4f4f6;
+            font-family:Arial,sans-serif;
+        }
+
+        .layout{
+            display:flex;
+            min-height:100vh;
+        }
+
+        .sidebar{
+            width:260px;
+            background:#111118;
+            border-right:1px solid #262634;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+        }
+
+        .sidebar-top{
+            padding:20px 16px;
+        }
+
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            padding-bottom:18px;
+            border-bottom:1px solid #262634;
+            margin-bottom:18px;
+        }
+
+        .brand-icon{
+            width:42px;
+            height:42px;
+            border-radius:12px;
+            background:linear-gradient(135deg,#ff7a1a,#ff5500);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:bold;
+            font-size:20px;
+            color:white;
+        }
+
+        .brand-text h1{
+            color:#ff7a1a;
+            font-size:25px;
+            line-height:1;
+        }
+
+        .brand-text p{
+            color:#a8a8b3;
+            font-size:12px;
+            margin-top:5px;
+        }
+
+        .menu-title{
+            color:#7f7f91;
+            font-size:12px;
+            text-transform:uppercase;
+            letter-spacing:1px;
+            padding:8px 10px 12px;
+        }
+
+        .nav-btn{
+            width:100%;
+            border:none;
+            background:transparent;
+            color:#ddd;
+            text-align:left;
+            padding:14px 14px;
+            border-radius:14px;
+            cursor:pointer;
+            margin-bottom:8px;
+            font-size:15px;
+            transition:.2s ease;
+        }
+
+        .nav-btn:hover{
+            background:rgba(255,122,26,.08);
+            color:#fff;
+        }
+
+        .nav-btn.active{
+            background:rgba(255,122,26,.14);
+            color:#ff7a1a;
+            border:1px solid rgba(255,122,26,.25);
+        }
+
+        .sidebar-bottom{
+            padding:16px;
+            border-top:1px solid #262634;
+        }
+
+        .logout-btn{
+            width:100%;
+            background:transparent;
+            color:#eee;
+            border:1px solid #333445;
+            padding:12px;
+            border-radius:12px;
+            cursor:pointer;
+            transition:.2s ease;
+        }
+
+        .logout-btn:hover{
+            border-color:#ff7a1a;
+            color:#ff7a1a;
+        }
+
+        .main{
+            flex:1;
+            padding:28px;
+        }
+
+        .topbar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:20px;
+            margin-bottom:24px;
+        }
+
+        .page-title h2{
+            font-size:34px;
+            font-weight:bold;
+        }
+
+        .page-title h2 span{
+            color:#ff7a1a;
+        }
+
+        .page-title p{
+            color:#9f9fad;
+            margin-top:6px;
+            font-size:14px;
+        }
+
+        .profile-box{
+            background:#14141c;
+            border:1px solid #262634;
+            border-radius:18px;
+            padding:12px 16px;
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+
+        .avatar{
+            width:46px;
+            height:46px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#ff7a1a,#ff5500);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#fff;
+            font-weight:bold;
+            font-size:16px;
+        }
+
+        .profile-meta strong{
+            display:block;
+            font-size:15px;
+        }
+
+        .profile-meta span{
+            color:#ff9d52;
+            font-size:12px;
+            text-transform:uppercase;
+        }
+
+        .messages{
+            margin-bottom:18px;
+        }
+
+        .messages ul{
+            list-style:none;
+        }
+
+        .messages li{
+            background:#15151e;
+            border:1px solid #2b2b3a;
+            padding:12px 14px;
+            border-radius:12px;
+            margin-bottom:8px;
+        }
+
+        .section-page{
+            display:none;
+            animation:fadeIn .25s ease;
+        }
+
+        .section-page.active{
+            display:block;
+        }
+
+        @keyframes fadeIn{
+            from{opacity:0;transform:translateY(6px)}
+            to{opacity:1;transform:translateY(0)}
+        }
+
+        .hero{
+            background:linear-gradient(180deg,#15151d,#111118);
+            border:1px solid #262634;
+            border-radius:22px;
+            padding:24px;
+            margin-bottom:20px;
+        }
+
+        .hero h3{
+            font-size:27px;
+            margin-bottom:8px;
+        }
+
+        .hero h3 span{
+            color:#ff7a1a;
+        }
+
+        .hero p{
+            color:#b8b8c3;
+            line-height:1.6;
+            max-width:760px;
+        }
+
+        .hero-badge{
+            display:inline-block;
+            margin-top:16px;
+            padding:10px 14px;
+            border-radius:999px;
+            background:rgba(255,122,26,.08);
+            border:1px solid rgba(255,122,26,.2);
+            color:#ffd3b5;
+            font-size:13px;
+        }
+
+        .cards{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:16px;
+            margin-bottom:20px;
+        }
+
+        .card{
+            background:#14141c;
+            border:1px solid #262634;
+            border-radius:18px;
+            padding:18px;
+        }
+
+        .card-label{
+            color:#9a9aaa;
+            font-size:13px;
+            margin-bottom:12px;
+        }
+
+        .card-value{
+            font-size:30px;
+            font-weight:bold;
+            color:#ff7a1a;
+            margin-bottom:10px;
+        }
+
+        .card-sub{
+            color:#c8c8d2;
+            font-size:13px;
+            line-height:1.5;
+        }
+
+        .grid-2{
+            display:grid;
+            grid-template-columns:1.4fr 1fr;
+            gap:18px;
+            margin-bottom:20px;
+        }
+
+        .panel{
+            background:#14141c;
+            border:1px solid #262634;
+            border-radius:20px;
+            padding:20px;
+            margin-bottom:18px;
+        }
+
+        .panel h3{
+            font-size:20px;
+            margin-bottom:6px;
+        }
+
+        .panel-head{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            margin-bottom:18px;
+        }
+
+        .panel-head p{
+            color:#9d9dad;
+            font-size:13px;
+        }
+
+        .progress-top{
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:8px;
+            font-size:14px;
+        }
+
+        .progress{
+            width:100%;
+            height:14px;
+            background:#0d0d13;
+            border:1px solid #232330;
+            border-radius:999px;
+            overflow:hidden;
+        }
+
+        .progress-bar{
+            height:100%;
+            background:linear-gradient(90deg,#ff7a1a,#ffb067);
+            border-radius:999px;
+        }
+
+        .mini-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:16px;
+            margin-top:18px;
+        }
+
+        .mini-stat{
+            background:#0e0e14;
+            border:1px solid #252533;
+            border-radius:16px;
+            padding:16px;
+        }
+
+        .mini-stat h4{
+            color:#9a9aaa;
+            font-size:12px;
+            margin-bottom:8px;
+            text-transform:uppercase;
+        }
+
+        .mini-stat strong{
+            color:#ff7a1a;
+            font-size:22px;
+        }
+
+        .chart-list{
+            display:flex;
+            flex-direction:column;
+            gap:16px;
+        }
+
+        .chart-item{
+            display:grid;
+            grid-template-columns:140px 1fr 45px;
+            gap:12px;
+            align-items:center;
+        }
+
+        .chart-track{
+            height:12px;
+            background:#0d0d13;
+            border:1px solid #232330;
+            border-radius:999px;
+            overflow:hidden;
+        }
+
+        .chart-fill{
+            height:100%;
+            background:linear-gradient(90deg,#ff7a1a,#ffb067);
+            border-radius:999px;
+        }
+
+        .table-wrap{
+            overflow-x:auto;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th, td{
+            padding:14px 10px;
+            text-align:left;
+            border-bottom:1px solid #232330;
+            font-size:14px;
+        }
+
+        th{
+            color:#8f8fa0;
+            font-size:12px;
+            text-transform:uppercase;
+        }
+
+        .badge{
+            display:inline-block;
+            padding:6px 12px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:bold;
+        }
+
+        .badge-ok{
+            background:rgba(35,193,107,.12);
+            color:#23c16b;
+            border:1px solid rgba(35,193,107,.18);
+        }
+
+        .badge-warn{
+            background:rgba(255,122,26,.12);
+            color:#ff9d52;
+            border:1px solid rgba(255,122,26,.18);
+        }
+
+        .badge-danger{
+            background:rgba(224,82,82,.12);
+            color:#e05252;
+            border:1px solid rgba(224,82,82,.18);
+        }
+
+        .empty-box{
+            border:1px dashed #303040;
+            border-radius:16px;
+            padding:24px;
+            text-align:center;
+            color:#9f9fae;
+        }
+
+        .form-grid{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:16px;
+        }
+
+        .field{
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+        }
+
+        .field label{
+            font-size:14px;
+            font-weight:bold;
+            color:#ddd;
+        }
+
+        .input, .select{
+            width:100%;
+            background:#0d0d13;
+            color:#f3f3f7;
+            border:1px solid #2a2a39;
+            border-radius:14px;
+            padding:14px;
+            outline:none;
+        }
+
+        .input:focus, .select:focus{
+            border-color:#ff7a1a;
+        }
+
+        .actions{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-top:18px;
+        }
+
+        .btn{
+            border:none;
+            border-radius:14px;
+            padding:12px 18px;
+            cursor:pointer;
+            font-weight:bold;
+            font-size:14px;
+        }
+
+        .btn-primary{
+            background:linear-gradient(90deg,#ff7a1a,#ff5f00);
+            color:white;
+        }
+
+        .btn-secondary{
+            background:#1a1a24;
+            color:#eee;
+            border:1px solid #2b2b3a;
+        }
+
+        .btn-danger{
+            background:#2a1416;
+            color:#ffb3b3;
+            border:1px solid #5a262c;
+        }
+
+        @media (max-width:1200px){
+            .cards{grid-template-columns:repeat(2,1fr)}
+            .grid-2{grid-template-columns:1fr}
+            .mini-grid{grid-template-columns:1fr}
+        }
+
+        @media (max-width:900px){
+            .layout{flex-direction:column}
+            .sidebar{width:100%}
+            .main{padding:18px}
+            .cards{grid-template-columns:1fr}
+            .form-grid{grid-template-columns:1fr}
+            .topbar{flex-direction:column;align-items:flex-start}
+        }
+    </style>
+
+    <script>
+        function showSection(id){
+            const sections = document.querySelectorAll('.section-page');
+            const buttons = document.querySelectorAll('.nav-btn');
+
+            sections.forEach(section => section.classList.remove('active'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            const target = document.getElementById('section-' + id);
+            const activeBtn = document.querySelector('[data-target="' + id + '"]');
+
+            if(target){ target.classList.add('active'); }
+            if(activeBtn){ activeBtn.classList.add('active'); }
+        }
+
+        window.addEventListener('DOMContentLoaded', function(){
+            showSection('dashboard');
+        });
+    </script>
+</h:head>
+
+<h:body>
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <div class="brand">
+                    <div class="brand-icon">F</div>
+                    <div class="brand-text">
+                        <h1>FITZONE</h1>
+                        <p>Club Management</p>
+                    </div>
+                </div>
+
+                <div class="menu-title">Navigation</div>
+
+                <button type="button" class="nav-btn active" data-target="dashboard" onclick="showSection('dashboard')">Tableau de bord</button>
+                <button type="button" class="nav-btn" data-target="abonnements" onclick="showSection('abonnements')">Mes abonnements</button>
+                <button type="button" class="nav-btn" data-target="reservations" onclick="showSection('reservations')">Mes réservations</button>
+                <button type="button" class="nav-btn" data-target="reserver" onclick="showSection('reserver')">Réserver une séance</button>
+                <button type="button" class="nav-btn" data-target="profil" onclick="showSection('profil')">Mon profil</button>
+            </div>
+
+            <div class="sidebar-bottom">
+                <h:form>
+                    <h:commandButton value="Déconnexion"
+                                     action="#{authBean.logout}"
+                                     styleClass="logout-btn"/>
+                </h:form>
+            </div>
+        </aside>
+
+        <main class="main">
+
+            <div class="topbar">
+                <div class="page-title">
+                    <h2>Dashboard <span>Membre</span></h2>
+                    <p>Suivez vos activités, vos réservations et votre abonnement en un seul endroit.</p>
+                </div>
+
+                <div class="profile-box">
+                    <div class="avatar">
+                        <h:outputText value="#{authBean.initiales}" />
+                    </div>
+                    <div class="profile-meta">
+                        <strong>
+                            <h:outputText value="#{empty authBean.utilisateurConnecte ? 'Membre' : authBean.utilisateurConnecte.prenom.concat(' ').concat(authBean.utilisateurConnecte.nom)}"/>
+                        </strong>
+                        <span>Membre</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="messages">
+                <h:messages globalOnly="true" layout="list"/>
+            </div>
+
+            <!-- DASHBOARD -->
+            <section id="section-dashboard" class="section-page active">
+                <div class="hero">
+                    <h3>Bienvenue, <span><h:outputText value="#{empty authBean.utilisateurConnecte ? 'Membre' : authBean.utilisateurConnecte.prenom}"/></span></h3>
+                    <p>
+                        Consultez votre progression, votre abonnement actif, vos réservations
+                        et les séances disponibles dans votre club.
+                    </p>
+                    <div class="hero-badge">
+                        Jours restants : <strong><h:outputText value="#{membreBean.joursRestants}" /></strong>
+                    </div>
+                </div>
+
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-label">Abonnement actif</div>
+                        <div class="card-value">
+                            <h:outputText value="#{membreBean.abonnementActif != null ? 'Oui' : 'Non'}"/>
+                        </div>
+                        <div class="card-sub">Type : <h:outputText value="#{membreBean.typeAbonnementLabel}" /></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-label">Réservations</div>
+                        <div class="card-value">
+                            <h:outputText value="#{empty membreBean.toutesReservations ? 0 : membreBean.toutesReservations.size()}" />
+                        </div>
+                        <div class="card-sub">Total de vos réservations enregistrées.</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-label">Séances du mois</div>
+                        <div class="card-value"><h:outputText value="#{membreBean.seancesCeMois}" /></div>
+                        <div class="card-sub">Activité suivie durant ce mois.</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-label">Présences</div>
+                        <div class="card-value"><h:outputText value="#{membreBean.totalPresences}" /></div>
+                        <div class="card-sub">Nombre total de présences enregistrées.</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div>
+                                <h3>Progression de l’abonnement</h3>
+                                <p>Visualisation de la période consommée</p>
+                            </div>
+                        </div>
+
+                        <div class="progress-top">
+                            <span>Progression</span>
+                            <strong><h:outputText value="#{membreBean.progressionAbonnement}" />%</strong>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar" style="#{membreBean.progressBarStyle}"></div>
+                        </div>
+
+                        <div class="mini-grid">
+                            <div class="mini-stat">
+                                <h4>Date début</h4>
+                                <strong><h:outputText value="#{membreBean.abonnementActif != null ? membreBean.abonnementActif.dateDebut : '--'}"/></strong>
+                            </div>
+                            <div class="mini-stat">
+                                <h4>Date fin</h4>
+                                <strong><h:outputText value="#{membreBean.abonnementActif != null ? membreBean.abonnementActif.dateFin : '--'}"/></strong>
+                            </div>
+                            <div class="mini-stat">
+                                <h4>Jours restants</h4>
+                                <strong><h:outputText value="#{membreBean.joursRestants}"/></strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div>
+                                <h3>Activité visuelle</h3>
+                                <p>Résumé graphique</p>
+                            </div>
+                        </div>
+
+                        <div class="chart-list">
+                            <div class="chart-item">
+                                <span>Présences</span>
+                                <div class="chart-track">
+                                    <div class="chart-fill" style="width: 70%;"></div>
+                                </div>
+                                <strong><h:outputText value="#{membreBean.totalPresences}" /></strong>
+                            </div>
+
+                            <div class="chart-item">
+                                <span>Réservations</span>
+                                <div class="chart-track">
+                                    <div class="chart-fill" style="width: 80%;"></div>
+                                </div>
+                                <strong><h:outputText value="#{empty membreBean.toutesReservations ? 0 : membreBean.toutesReservations.size()}" /></strong>
+                            </div>
+
+                            <div class="chart-item">
+                                <span>Séances du mois</span>
+                                <div class="chart-track">
+                                    <div class="chart-fill" style="width: 55%;"></div>
+                                </div>
+                                <strong><h:outputText value="#{membreBean.seancesCeMois}" /></strong>
+                            </div>
+
+                            <div class="chart-item">
+                                <span>Séances planifiées</span>
+                                <div class="chart-track">
+                                    <div class="chart-fill" style="width: 75%;"></div>
+                                </div>
+                                <strong><h:outputText value="#{empty membreBean.seancesPlanifiees ? 0 : membreBean.seancesPlanifiees.size()}" /></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Prochaine réservation</h3>
+                            <p>Votre prochain cours programmé</p>
+                        </div>
+                    </div>
+
+                    <h:panelGroup rendered="#{membreBean.prochaineReservation != null}">
+                        <div class="mini-grid">
+                            <div class="mini-stat">
+                                <h4>Séance</h4>
+                                <strong><h:outputText value="#{membreBean.prochaineReservation.seance.titre}" /></strong>
+                            </div>
+                            <div class="mini-stat">
+                                <h4>Date</h4>
+                                <strong><h:outputText value="#{membreBean.prochaineReservation.seance.dateHeure}" /></strong>
+                            </div>
+                            <div class="mini-stat">
+                                <h4>Statut</h4>
+                                <strong><h:outputText value="#{membreBean.prochaineReservation.statutReservation}" /></strong>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{membreBean.prochaineReservation == null}">
+                        <div class="empty-box">Aucune réservation à venir.</div>
+                    </h:panelGroup>
+                </div>
+            </section>
+
+            <!-- ABONNEMENTS -->
+            <section id="section-abonnements" class="section-page">
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Souscrire un abonnement</h3>
+                            <p>Choisissez la formule qui vous convient</p>
+                        </div>
+                    </div>
+
+                    <h:form>
+                        <div class="actions">
+                            <h:commandButton value="Mensuel"
+                                             action="#{membreBean.souscrireMensuel}"
+                                             styleClass="btn btn-primary"/>
+                            <h:commandButton value="Annuel"
+                                             action="#{membreBean.souscrireAnnuel}"
+                                             styleClass="btn btn-primary"/>
+                            <h:commandButton value="Séance unique"
+                                             action="#{membreBean.souscrireSeanceUnique}"
+                                             styleClass="btn btn-secondary"/>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Abonnement actif</h3>
+                            <p>Détails de votre formule actuelle</p>
+                        </div>
+                    </div>
+
+                    <h:panelGroup rendered="#{membreBean.abonnementActif != null}">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Date début</th>
+                                    <th>Date fin</th>
+                                    <th>Prix</th>
+                                    <th>Statut</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><h:outputText value="#{membreBean.typeAbonnementLabel}" /></td>
+                                    <td><h:outputText value="#{membreBean.abonnementActif.dateDebut}" /></td>
+                                    <td><h:outputText value="#{membreBean.abonnementActif.dateFin}" /></td>
+                                    <td><h:outputText value="#{membreBean.abonnementActif.prix}" /></td>
+                                    <td><span class="badge badge-ok">Actif</span></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{membreBean.abonnementActif == null}">
+                        <div class="empty-box">Aucun abonnement actif.</div>
+                    </h:panelGroup>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Historique des abonnements</h3>
+                            <p>Liste complète de vos abonnements</p>
+                        </div>
+                    </div>
+
+                    <h:panelGroup rendered="#{not empty membreBean.historiquesAbonnements}">
+                        <h:form>
+                            <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Date début</th>
+                                        <th>Date fin</th>
+                                        <th>Prix</th>
+                                        <th>Statut</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <ui:repeat value="#{membreBean.historiquesAbonnements}" var="a">
+                                        <tr>
+                                            <td><h:outputText value="#{membreBean.formatTypeAbonnement(a.type)}" /></td>
+                                            <td><h:outputText value="#{a.dateDebut}" /></td>
+                                            <td><h:outputText value="#{a.dateFin}" /></td>
+                                            <td><h:outputText value="#{a.prix}" /></td>
+                                            <td><h:outputText value="#{a.statut}" /></td>
+                                            <td>
+                                                <h:commandButton value="Supprimer"
+                                                                 action="#{membreBean.annulerAbonnement(a)}"
+                                                                 onclick="return confirm('Supprimer cet abonnement ?')"
+                                                                 styleClass="btn btn-danger"/>
+                                            </td>
+                                        </tr>
+                                    </ui:repeat>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </h:form>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{empty membreBean.historiquesAbonnements}">
+                        <div class="empty-box">Aucun historique d’abonnement.</div>
+                    </h:panelGroup>
+                </div>
+            </section>
+
+            <!-- RESERVATIONS -->
+            <section id="section-reservations" class="section-page">
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Mes réservations</h3>
+                            <p>Consultez et annulez vos séances réservées</p>
+                        </div>
+                    </div>
+
+                    <h:panelGroup rendered="#{not empty membreBean.toutesReservations}">
+                        <h:form>
+                            <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>Séance</th>
+                                        <th>Date</th>
+                                        <th>Statut</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <ui:repeat value="#{membreBean.toutesReservations}" var="r">
+                                        <tr>
+                                            <td><h:outputText value="#{r.seance != null ? r.seance.titre : 'Séance inconnue'}"/></td>
+                                            <td><h:outputText value="#{r.seance != null ? r.seance.dateHeure : '--'}"/></td>
+                                            <td>
+                                                <h:panelGroup rendered="#{r.statutReservation.toString() eq 'annulee'}">
+                                                    <span class="badge badge-danger">Annulée</span>
+                                                </h:panelGroup>
+                                                <h:panelGroup rendered="#{r.statutReservation.toString() ne 'annulee'}">
+                                                    <span class="badge badge-warn">
+                                                        <h:outputText value="#{r.statutReservation}" />
+                                                    </span>
+                                                </h:panelGroup>
+                                            </td>
+                                            <td>
+                                                <h:panelGroup rendered="#{r.statutReservation.toString() ne 'annulee'}">
+                                                    <h:commandButton value="Annuler"
+                                                                     action="#{membreBean.preparerAnnulation(r.id)}"
+                                                                     styleClass="btn btn-danger">
+                                                        <f:ajax execute="@this" render="@form"/>
+                                                    </h:commandButton>
+
+                                                    <h:commandButton value="Confirmer"
+                                                                     action="#{membreBean.annulerReservation}"
+                                                                     onclick="return confirm('Confirmer l''annulation de cette réservation ?')"
+                                                                     styleClass="btn btn-secondary"/>
+                                                </h:panelGroup>
+
+                                                <h:panelGroup rendered="#{r.statutReservation.toString() eq 'annulee'}">
+                                                    <span class="badge badge-danger">Déjà annulée</span>
+                                                </h:panelGroup>
+                                            </td>
+                                        </tr>
+                                    </ui:repeat>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </h:form>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{empty membreBean.toutesReservations}">
+                        <div class="empty-box">Aucune réservation trouvée.</div>
+                    </h:panelGroup>
+                </div>
+            </section>
+
+            <!-- RESERVER -->
+            <section id="section-reserver" class="section-page">
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Réserver une séance</h3>
+                            <p>Sélectionnez une séance disponible et confirmez votre inscription</p>
+                        </div>
+                    </div>
+
+                    <h:form>
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Séance disponible</label>
+                                <h:selectOneMenu value="#{membreBean.idSeanceSelectionnee}" styleClass="select">
+                                    <f:selectItem itemLabel="-- Choisir une séance --" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{membreBean.seancesPlanifiees}"
+                                                   var="s"
+                                                   itemValue="#{s.id}"
+                                                   itemLabel="#{s.titre} - #{s.dateHeure}" />
+                                </h:selectOneMenu>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <h:commandButton value="Réserver la séance"
+                                             action="#{membreBean.reserverSeance}"
+                                             styleClass="btn btn-primary"/>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Séances disponibles</h3>
+                            <p>Liste des séances actuellement planifiées</p>
+                        </div>
+                    </div>
+
+                    <h:panelGroup rendered="#{not empty membreBean.seancesPlanifiees}">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Date</th>
+                                    <th>Durée</th>
+                                    <th>Catégorie</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <ui:repeat value="#{membreBean.seancesPlanifiees}" var="s">
+                                    <tr>
+                                        <td><h:outputText value="#{s.titre}" /></td>
+                                        <td><h:outputText value="#{s.dateHeure}" /></td>
+                                        <td><h:outputText value="#{s.duree}" /> min</td>
+                                        <td><h:outputText value="#{s.categorie}" /></td>
+                                    </tr>
+                                </ui:repeat>
+                                </tbody>
+                            </table>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{empty membreBean.seancesPlanifiees}">
+                        <div class="empty-box">Aucune séance disponible pour le moment.</div>
+                    </h:panelGroup>
+                </div>
+            </section>
+
+            <!-- PROFIL -->
+            <section id="section-profil" class="section-page">
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Mon profil</h3>
+                            <p>Modifiez vos informations personnelles</p>
+                        </div>
+                    </div>
+
+                    <h:form>
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Nom</label>
+                                <h:inputText value="#{membreBean.nom}" styleClass="input"/>
+                            </div>
+
+                            <div class="field">
+                                <label>Prénom</label>
+                                <h:inputText value="#{membreBean.prenom}" styleClass="input"/>
+                            </div>
+
+                            <div class="field">
+                                <label>Email</label>
+                                <h:inputText value="#{membreBean.email}" styleClass="input"/>
+                            </div>
+
+                            <div class="field">
+                                <label>Téléphone</label>
+                                <h:inputText value="#{membreBean.telephone}" styleClass="input"/>
+                            </div>
+
+                            <div class="field">
+                                <label>Adresse</label>
+                                <h:inputText value="#{membreBean.adresse}" styleClass="input"/>
+                            </div>
+
+                            <div class="field">
+                                <label>Date de naissance</label>
+                                <h:inputText value="#{membreBean.dateNaissanceStr}" styleClass="input"/>
+                            </div>
+
+                            <div class="field">
+                                <label>Nouveau mot de passe</label>
+                                <h:inputSecret value="#{membreBean.nouveauMdp}" styleClass="input"/>
+                            </div>
+
+                            <div class="field">
+                                <label>Confirmer le mot de passe</label>
+                                <h:inputSecret value="#{membreBean.confirmMdp}" styleClass="input"/>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <h:commandButton value="Enregistrer les modifications"
+                                             action="#{membreBean.sauvegarderProfil}"
+                                             styleClass="btn btn-primary"/>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</h:body>
+</html>

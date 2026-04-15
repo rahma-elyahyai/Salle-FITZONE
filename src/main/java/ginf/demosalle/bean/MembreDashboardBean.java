@@ -95,7 +95,7 @@ public class MembreDashboardBean implements Serializable {
             /* Abonnement actif */
             List<Abonnement> abos = s.createQuery(
                             "FROM Abonnement a WHERE a.membre.id = :mid " +
-                            "AND a.statut = :st AND a.dateFin >= :today ORDER BY a.dateFin DESC", Abonnement.class)
+                                    "AND a.statut = :st AND a.dateFin >= :today ORDER BY a.dateFin DESC", Abonnement.class)
                     .setParameter("mid",   membre.getId())
                     .setParameter("st",    Abonnement.Statut.actif)
                     .setParameter("today", today)
@@ -105,8 +105,8 @@ public class MembreDashboardBean implements Serializable {
             /* Réservations à venir */
             reservationsAvenir = s.createQuery(
                             "FROM Reservation r WHERE r.membre.id = :mid " +
-                            "AND r.seance.dateHeure > :now AND r.statutReservation <> :ann " +
-                            "ORDER BY r.seance.dateHeure ASC", Reservation.class)
+                                    "AND r.seance.dateHeure > :now AND r.statutReservation <> :ann " +
+                                    "ORDER BY r.seance.dateHeure ASC", Reservation.class)
                     .setParameter("mid", membre.getId())
                     .setParameter("now", now)
                     .setParameter("ann", Reservation.Statut.annulee).getResultList();
@@ -115,7 +115,7 @@ public class MembreDashboardBean implements Serializable {
             /* Réservations historique */
             reservationsHistorique = s.createQuery(
                             "FROM Reservation r WHERE r.membre.id = :mid " +
-                            "AND r.seance.dateHeure <= :now ORDER BY r.seance.dateHeure DESC", Reservation.class)
+                                    "AND r.seance.dateHeure <= :now ORDER BY r.seance.dateHeure DESC", Reservation.class)
                     .setParameter("mid", membre.getId())
                     .setParameter("now", now).getResultList();
             initReservations(reservationsHistorique);
@@ -126,15 +126,15 @@ public class MembreDashboardBean implements Serializable {
 
             seancesCeMois = s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.membre.id = :mid " +
-                            "AND r.seance.dateHeure BETWEEN :debut AND :fin " +
-                            "AND r.statutReservation <> :ann", Long.class)
+                                    "AND r.seance.dateHeure BETWEEN :debut AND :fin " +
+                                    "AND r.statutReservation <> :ann", Long.class)
                     .setParameter("mid", membre.getId())
                     .setParameter("debut", debut).setParameter("fin", fin)
                     .setParameter("ann",  Reservation.Statut.annulee).uniqueResult();
 
             totalPresences = s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.membre.id = :mid " +
-                            "AND (r.statutReservation = :conf OR r.statutReservation = :term)", Long.class)
+                                    "AND (r.statutReservation = :conf OR r.statutReservation = :term)", Long.class)
                     .setParameter("mid",  membre.getId())
                     .setParameter("conf", Reservation.Statut.confirmee)
                     .setParameter("term", Reservation.Statut.terminee).uniqueResult();
@@ -148,23 +148,23 @@ public class MembreDashboardBean implements Serializable {
             /* Séances disponibles (non inscrit, planifiées, futures) */
             List<Integer> dejInscrits = s.createQuery(
                             "SELECT r.seance.id FROM Reservation r WHERE r.membre.id = :mid " +
-                            "AND r.seance.dateHeure > :now AND r.statutReservation <> :ann", Integer.class)
+                                    "AND r.seance.dateHeure > :now AND r.statutReservation <> :ann", Integer.class)
                     .setParameter("mid", membre.getId())
                     .setParameter("now", now)
                     .setParameter("ann", Reservation.Statut.annulee).getResultList();
 
             seancesDisponibles = dejInscrits.isEmpty()
-                ? s.createQuery(
+                    ? s.createQuery(
                             "FROM Seance s WHERE s.dateHeure > :now AND s.statut = :pl " +
-                            "ORDER BY s.dateHeure ASC", Seance.class)
-                        .setParameter("now", now)
-                        .setParameter("pl",  Seance.Statut.planifiee).getResultList()
-                : s.createQuery(
+                                    "ORDER BY s.dateHeure ASC", Seance.class)
+                    .setParameter("now", now)
+                    .setParameter("pl",  Seance.Statut.planifiee).getResultList()
+                    : s.createQuery(
                             "FROM Seance s WHERE s.dateHeure > :now AND s.statut = :pl " +
-                            "AND s.id NOT IN :exclu ORDER BY s.dateHeure ASC", Seance.class)
-                        .setParameter("now",   now)
-                        .setParameter("pl",    Seance.Statut.planifiee)
-                        .setParameter("exclu", dejInscrits).getResultList();
+                                    "AND s.id NOT IN :exclu ORDER BY s.dateHeure ASC", Seance.class)
+                    .setParameter("now",   now)
+                    .setParameter("pl",    Seance.Statut.planifiee)
+                    .setParameter("exclu", dejInscrits).getResultList();
 
             for (Seance seance : seancesDisponibles) {
                 org.hibernate.Hibernate.initialize(seance.getSalle());
@@ -196,8 +196,8 @@ public class MembreDashboardBean implements Serializable {
     private int cntSem(Session s, LocalDateTime d, LocalDateTime f) {
         Long n = s.createQuery(
                         "SELECT COUNT(r) FROM Reservation r WHERE r.membre.id = :mid " +
-                        "AND r.seance.dateHeure BETWEEN :d AND :f " +
-                        "AND r.statutReservation <> :ann", Long.class)
+                                "AND r.seance.dateHeure BETWEEN :d AND :f " +
+                                "AND r.statutReservation <> :ann", Long.class)
                 .setParameter("mid", membre.getId())
                 .setParameter("d", d).setParameter("f", f)
                 .setParameter("ann", Reservation.Statut.annulee).uniqueResult();
@@ -217,7 +217,7 @@ public class MembreDashboardBean implements Serializable {
 
             long inscrits = s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.seance.id = :sid " +
-                            "AND r.statutReservation <> :ann", Long.class)
+                                    "AND r.statutReservation <> :ann", Long.class)
                     .setParameter("sid", seanceAInscrire)
                     .setParameter("ann", Reservation.Statut.annulee).uniqueResult();
             if (inscrits >= seance.getCapaciteMaximale()) {
@@ -226,7 +226,7 @@ public class MembreDashboardBean implements Serializable {
 
             long doublon = s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.membre.id = :mid " +
-                            "AND r.seance.id = :sid AND r.statutReservation <> :ann", Long.class)
+                                    "AND r.seance.id = :sid AND r.statutReservation <> :ann", Long.class)
                     .setParameter("mid", membre.getId())
                     .setParameter("sid", seanceAInscrire)
                     .setParameter("ann", Reservation.Statut.annulee).uniqueResult();
@@ -416,7 +416,7 @@ public class MembreDashboardBean implements Serializable {
             if (seance == null) return false;
             long n = s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.seance.id = :sid " +
-                            "AND r.statutReservation <> :ann", Long.class)
+                                    "AND r.statutReservation <> :ann", Long.class)
                     .setParameter("sid", seanceId)
                     .setParameter("ann", Reservation.Statut.annulee).uniqueResult();
             return n < seance.getCapaciteMaximale();
@@ -428,7 +428,7 @@ public class MembreDashboardBean implements Serializable {
         try (Session s = HibernateUtil.getSessionFactory().openSession()) {
             return s.createQuery(
                             "SELECT COUNT(r) FROM Reservation r WHERE r.seance.id = :sid " +
-                            "AND r.statutReservation <> :ann", Long.class)
+                                    "AND r.statutReservation <> :ann", Long.class)
                     .setParameter("sid", seanceId)
                     .setParameter("ann", Reservation.Statut.annulee).uniqueResult();
         }

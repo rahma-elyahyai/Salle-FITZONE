@@ -4,11 +4,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * Entité JPA mappée sur la table `utilisateur`.
- * Structure exacte du SQL fourni :
- *   id_utilisateur, nom, prenom, email, role (MEMBRE|COACH), mdp, telephone, date_creation, photo
- */
+
 @Entity
 @Table(name = "utilisateur")
 public class Utilisateur implements Serializable {
@@ -16,7 +12,9 @@ public class Utilisateur implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_utilisateur")
+
     private Integer id;
+
 
     @Column(name = "nom", nullable = false, length = 100)
     private String nom;
@@ -28,7 +26,9 @@ public class Utilisateur implements Serializable {
     private String email;
 
     @Enumerated(EnumType.STRING)
+
     @Column(name = "role", nullable = false, length = 20)
+
     private Role role;
 
     @Column(name = "mdp", nullable = false, length = 255)
@@ -43,16 +43,18 @@ public class Utilisateur implements Serializable {
     @Column(name = "photo", length = 255)
     private String photo;
 
+
     // ── Constructeurs ──────────────────────────────────────────────────────────
 
-    public Utilisateur() {}
+    public Utilisateur() {
+    }
 
     public Utilisateur(String nom, String prenom, String email, String mdp, Role role) {
-        this.nom          = nom;
-        this.prenom       = prenom;
-        this.email        = email;
-        this.mdp          = mdp;
-        this.role         = role;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.email = email;
+        this.mdp = mdp;
+        this.role = role;
         this.dateCreation = LocalDateTime.now();
     }
 
@@ -62,10 +64,11 @@ public class Utilisateur implements Serializable {
             this.dateCreation = LocalDateTime.now();
         }
     }
+
     // Dans Utilisateur.java
     public String getInitiales() {
         return (prenom != null && !prenom.isEmpty() ? String.valueOf(prenom.charAt(0)) : "")
-                + (nom    != null && !nom.isEmpty()    ? String.valueOf(nom.charAt(0))    : "");
+                + (nom != null && !nom.isEmpty() ? String.valueOf(nom.charAt(0)) : "");
     }
     // ── Helper ─────────────────────────────────────────────────────────────────
 
@@ -75,30 +78,75 @@ public class Utilisateur implements Serializable {
 
     // ── Getters / Setters ──────────────────────────────────────────────────────
 
-    public Integer getId()                       { return id; }
-    public void setId(Integer id)                { this.id = id; }
+    public Integer getId() {
+        return id;
+    }
 
-    public String getNom()                       { return nom; }
-    public void setNom(String nom)               { this.nom = nom; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public String getPrenom()                    { return prenom; }
-    public void setPrenom(String prenom)         { this.prenom = prenom; }
+    public String getNom() {
+        return nom;
+    }
 
-    public String getEmail()                     { return email; }
-    public void setEmail(String email)           { this.email = email; }
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
 
-    public Role getRole()                        { return role; }
-    public void setRole(Role role)               { this.role = role; }
+    public String getPrenom() {
+        return prenom;
+    }
 
-    public String getMdp()                       { return mdp; }
-    public void setMdp(String mdp)               { this.mdp = mdp; }
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
 
-    public String getTelephone()                 { return telephone; }
-    public void setTelephone(String telephone)   { this.telephone = telephone; }
+    public String getEmail() {
+        return email;
+    }
 
-    public LocalDateTime getDateCreation()       { return dateCreation; }
-    public void setDateCreation(LocalDateTime d) { this.dateCreation = d; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getPhoto()                     { return photo; }
-    public void setPhoto(String photo)           { this.photo = photo; }
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public String getMdp() {
+        return mdp;
+    }
+
+    public void setMdp(String mdp) {
+        this.mdp = mdp;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public LocalDateTime getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(LocalDateTime d) {
+        this.dateCreation = d;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
 }

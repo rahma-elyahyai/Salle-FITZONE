@@ -26,7 +26,7 @@
         </cookie-config>
     </session-config>
 
-    <!-- Page d'accueil -->
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>

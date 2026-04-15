@@ -35,6 +35,7 @@ public class Reservation implements Serializable {
 
     public Reservation() {}
 
+
     public Integer getId()                          { return id; }
     public LocalDateTime getDateReservation()       { return dateReservation; }
     public void setDateReservation(LocalDateTime d) { this.dateReservation = d; }
@@ -46,4 +47,5 @@ public class Reservation implements Serializable {
     public void setSeance(Seance s)                 { this.seance = s; }
     public Membre getMembre()                       { return membre; }
     public void setMembre(Membre m)                 { this.membre = m; }
+
 }

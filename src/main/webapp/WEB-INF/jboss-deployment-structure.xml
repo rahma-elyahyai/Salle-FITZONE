@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-deployment-structure>
     <deployment>
+
         <!-- Let WildFly handle CDI entirely — no exclusions needed -->
         <dependencies>
             <module name="jakarta.enterprise.api"/>
             <module name="jakarta.inject.api"/>
         </dependencies>
+
     </deployment>
 </jboss-deployment-structure>

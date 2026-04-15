@@ -9,16 +9,19 @@ import org.hibernate.query.Query;
 
 import java.util.Optional;
 
-// ✅ CORRIGÉ : @ApplicationScoped rend ce DAO injectable via CDI
+
+
 @ApplicationScoped
 public class UtilisateurDAO {
 
     public Optional<Utilisateur> findByEmail(String email) {
         try (Session s = HibernateUtil.getSessionFactory().openSession()) {
             Query<Utilisateur> q = s.createQuery(
+
                     "FROM Utilisateur u WHERE LOWER(u.email) = LOWER(:email)",
                     Utilisateur.class
             );
+
             q.setParameter("email", email.trim());
             return q.uniqueResultOptional();
         }
@@ -26,12 +29,29 @@ public class UtilisateurDAO {
 
     public boolean emailExists(String email) {
         try (Session s = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Long> q = s.createQuery(
-                    "SELECT COUNT(u) FROM Utilisateur u WHERE LOWER(u.email) = LOWER(:email)",
-                    Long.class
-            );
-            q.setParameter("email", email.trim());
-            return q.uniqueResult() > 0;
+
+            Long count = s.createQuery(
+                            "SELECT COUNT(u) FROM Utilisateur u WHERE LOWER(u.email) = LOWER(:email)", Long.class)
+                    .setParameter("email", email.trim()).uniqueResult();
+            return count != null && count > 0;
+        }
+    }
+
+    public boolean emailExistsExcept(String email, Integer idExclu) {
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            Long count = s.createQuery(
+                            "SELECT COUNT(u) FROM Utilisateur u WHERE LOWER(u.email) = LOWER(:email) AND u.id != :id",
+                            Long.class)
+                    .setParameter("email", email.trim())
+                    .setParameter("id", idExclu).uniqueResult();
+            return count != null && count > 0;
+        }
+    }
+
+    public Utilisateur findById(Integer id) {
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            return s.get(Utilisateur.class, id);
+
         }
     }
 
@@ -46,4 +66,18 @@ public class UtilisateurDAO {
             throw new RuntimeException("Erreur sauvegarde utilisateur", e);
         }
     }
+
+
+    public void update(Utilisateur u) {
+        Transaction tx = null;
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            tx = s.beginTransaction();
+            s.merge(u);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            throw new RuntimeException("Erreur mise à jour utilisateur", e);
+        }
+    }
+
 }
